@@ -1,0 +1,8 @@
+Table structure:
+
+Transaction-Date (Date)
+Description (String)
+Amount(Credit/Debit) (Double/Float)
+Closing Balance (Double/Float)
+Cheque/Ref Number (String)
+Value Date (Date)
