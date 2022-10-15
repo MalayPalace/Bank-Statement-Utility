@@ -1,5 +1,7 @@
 Table structure:
 
+Bank-Name (String)
+Source (String) - Credit/Debit Card
 Transaction-Date (Date)
 Description (String)
 Amount(Credit/Debit) (Double/Float)

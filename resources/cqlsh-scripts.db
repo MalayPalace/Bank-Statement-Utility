@@ -1,0 +1,16 @@
+CREATE KEYSPACE bank_statement WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 1};
+
+CREATE TABLE statement (
+   bank_name text,
+   source text,
+   transaction_date date,
+   description text,
+   debit_amount float,
+   credit_amount float,
+   closing_balance float,
+   cheque_ref_number Bigint,
+   value_date date,
+   ins_date timestamp,
+   ins_user text,
+   Primary Key ((bank_name, source, transaction_date), description, cheque_ref_number)
+);
