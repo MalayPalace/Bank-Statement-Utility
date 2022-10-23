@@ -4,7 +4,7 @@ import logging
 log_file_name = "bank-statement-app.log"
 log_console_level = logging.INFO
 log_file_level = logging.DEBUG
-log_format = "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
+log_format = "%(levelname)s [%(asctime)s] {%(filename)s:%(lineno)d} - %(message)s"
 
 # set up logging to file
 logging.basicConfig(

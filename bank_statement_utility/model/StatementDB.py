@@ -8,7 +8,10 @@ class StatementDB:
         self.description = description
         self.debit_amount = debit_amount
         self.credit_amount = credit_amount
-        self.cheque_ref_number = ref_no
+        if ref_no:
+            self.cheque_ref_number = ref_no
+        else:
+            self.cheque_ref_number = 0
         self.closing_balance = balance
         self.value_date = value_date
 

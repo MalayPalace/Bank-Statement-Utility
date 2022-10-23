@@ -1,4 +1,6 @@
-from cassandra.cluster import Cluster, PlainTextAuthProvider
+import sys
+
+from cassandra.cluster import Cluster, PlainTextAuthProvider, NoHostAvailable
 from bank_statement_utility.logger import log
 from bank_statement_utility.config import config
 import datetime
@@ -22,18 +24,17 @@ class CassandraRepositoryHelper:
 
         log.info("Creating session with host:{host}".format(host=contact_points + port))
         # Database Credentials
-        self.session = self.cluster.connect()
-
-    def get_data(self):
-        result_set = self.session.execute("SELECT * FROM bank_statement.statement")
-        value = result_set.all()
-        print()
-        if value:
-            for v in value:
-                print(value)
-                print()
-        else:
-            print("Empty")
+        try:
+            self.session = self.cluster.connect()
+        except NoHostAvailable:
+            log.error("Unable to connect to DB on {host}:{port} with user:{user}. DB host not available".format(
+                host=contact_points,
+                port=port, user=username))
+            sys.exit("Unable to connect to DB. Check logs for more details")
+        except Exception as err:
+            log.error("Unknown error occur while connecting to DB. Error:{error}".format(error=err.__str__()),
+                      exc_info=True)
+            sys.exit("Unknown error occur while connecting to DB. Check logs for more details")
 
     def insert_data(self, data):
         stmt = self.session.prepare(

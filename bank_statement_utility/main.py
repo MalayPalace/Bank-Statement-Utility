@@ -1,29 +1,10 @@
 import argparse
-import datetime
 
+from bank_statement_utility.Constants import bank_names, account_type
+from bank_statement_utility.StatementProcessor import StatementProcessor
 from bank_statement_utility.config import config
 from bank_statement_utility.logger import log
 from bank_statement_utility.version import __version__
-from bank_statement_utility.Constants import bank_names, account_type
-from bank_statement_utility.parser.DelimitedParserWithHeader import DelimitedParserWithHeader
-from bank_statement_utility.StatementProcessor import StatementProcessor
-
-# def test_connectivity(filename):
-
-    # reader = DelimitedParserWithHeader(filename)
-    # data = reader.get_next_data()
-    # print(data)
-    # data = reader.get_next_data()
-    # print(data)
-    # reader.close()
-
-#     statement_db = StatementDB('Sample', 'DebitCard', '2022-10-01', 'Sample UPI transaction-45 -value', 300.0, 'D', 0,
-#                                500.0, '2022-10-01')
-#     statement_db2 = StatementDB('Sample', 'DebitCard', '2022-10-03', 'Sample UPI transaction-5', 300.0, 'D', 0,
-#                                500.0, '2022-10-02')
-#     CassandraRepositoryHelper().insert_data(statement_db)
-#     CassandraRepositoryHelper().insert_data(statement_db2)
-#     CassandraRepositoryHelper().get_data()
 
 
 def main():
@@ -46,11 +27,14 @@ def main():
     source = args.type
     filename = args.filename
 
-    #TODO Check file existing or not
+    # TODO Check file existing or not
     statement_processor = StatementProcessor(bank_name, source, filename)
-    statement_processor.process()
+    response = statement_processor.process()
 
-    # test_connectivity(filename)
+    if response != 0:
+        print("App ended successfully with errors. Check logs for details")
+    else:
+        print("App ended successfully")
 
 
 if __name__ == '__main__':

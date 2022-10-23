@@ -19,7 +19,9 @@ class HdfcDebitStatementProcessor:
             # Reached end so closing file
             self.parser.close()
             return -1
+        return value_dict
 
+    def map_record(self, value_dict):
         # Determine amount
         if Decimal(value_dict['Debit Amount']) > 0.00:
             debit_amount = float(value_dict['Debit Amount'])
