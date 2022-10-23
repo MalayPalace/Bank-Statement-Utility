@@ -1,4 +1,6 @@
 import argparse
+import os
+import sys
 
 from bank_statement_utility.Constants import bank_names, account_type
 from bank_statement_utility.StatementProcessor import StatementProcessor
@@ -8,7 +10,7 @@ from bank_statement_utility.version import __version__
 
 
 def main():
-    log.info('AppName, ' + config['Basic']['appName'])
+    log.info(config['Basic']['appName'] + " version: " + __version__)
 
     # Initialize parser
     parser = argparse.ArgumentParser()
@@ -27,7 +29,11 @@ def main():
     source = args.type
     filename = args.filename
 
-    # TODO Check file existing or not
+    is_file_exists = os.path.exists(filename)
+    if not is_file_exists:
+        log.error("File not found {path}".format(path=filename))
+        sys.exit("No such File Exists. Exiting...")
+
     statement_processor = StatementProcessor(bank_name, source, filename)
     response = statement_processor.process()
 

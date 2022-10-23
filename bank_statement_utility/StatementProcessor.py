@@ -49,7 +49,7 @@ class StatementProcessor(object):
             log.error("No Processor defined for bank {bank_name} and source type {source}".format(bank_name=self.bank_name,
                                                                                                   source=self.source))
             self.__close()
-            sys.exit("No processor found for given bank-name and source. Check logs for more details")
+            sys.exit("No processor found for given bank-name and source. Check logs for more details. Exiting...")
 
         self.__close()
         return response
