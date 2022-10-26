@@ -1,21 +1,21 @@
 from datetime import datetime
+from decimal import Decimal
 from ..parser.DelimitedParserWithHeader import DelimitedParserWithHeader
 from ..model.StatementDB import StatementDB
 from .BankStatementInterface import BankStatementInterface
 from ..config import config
 from .Utils import remove_comma
-from ..Constants import COMMA
+from ..Constants import TAB
 
 
-class KotakDebitStatementProcessor(BankStatementInterface):
+class SbiDebitStatementProcessor(BankStatementInterface):
 
     def __init__(self, filepath, source):
-        self.name = "KOTAK"
+        self.name = "SBI"
         self.source = source
         self.filepath = filepath
-        skip_data_col = int(config[self.name]['skip_data_column_no']) - 1
-        self.parser = DelimitedParserWithHeader(filepath, COMMA, config[self.name]['record_starts_with'],
-                                                config[self.name]['record_ends_with'], skip_data_col)
+        self.parser = DelimitedParserWithHeader(filepath, TAB, config[self.name]['record_starts_with'],
+                                                "", -1)
 
     def get_record(self):
         value_dict = self.parser.get_next_data()
@@ -28,19 +28,19 @@ class KotakDebitStatementProcessor(BankStatementInterface):
 
     def map_record(self, value_dict):
         # Determine amount
-        if value_dict['Dr / Cr'].upper() == "DR":
-            debit_amount = round(float(remove_comma(value_dict['Amount'])), 2)
+        if value_dict['Debit'] and Decimal(value_dict['Debit']) > 0.00:
+            debit_amount = float(remove_comma(value_dict['Debit']))
             credit_amount = None
         else:
             debit_amount = None
-            credit_amount = round(float(remove_comma(value_dict['Amount'])), 2)
+            credit_amount = float(remove_comma(value_dict['Credit']))
 
         # format Closing Balance
-        closing_balance = round(float(remove_comma(value_dict['Balance'])), 2)
+        closing_balance = float(remove_comma(value_dict['Balance']))
 
         # Date formatting
-        trans_date = datetime.strptime(value_dict['Transaction Date'], '%d-%m-%Y')
-        value_date = datetime.strptime(value_dict['Value Date'], '%d-%m-%Y')
+        trans_date = datetime.strptime(value_dict['Txn Date'], '%d %b %Y')
+        value_date = datetime.strptime(value_dict['Value Date'], '%d %b %Y')
 
         record = StatementDB(
             self.name,
@@ -49,7 +49,7 @@ class KotakDebitStatementProcessor(BankStatementInterface):
             value_dict['Description'],
             debit_amount,
             credit_amount,
-            value_dict['Chq / Ref No.'],
+            value_dict['Ref No./Cheque No.'],
             closing_balance,
             value_date
         )

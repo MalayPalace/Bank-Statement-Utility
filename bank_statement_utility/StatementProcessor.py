@@ -2,6 +2,7 @@ import sys
 
 from .services.HdfcDebitStatementProcessor import HdfcDebitStatementProcessor
 from .services.KotakDebitStatementProcessor import KotakDebitStatementProcessor
+from .services.SbiDebitStatementProcessor import SbiDebitStatementProcessor
 from .services.CassandraRepositoryHelper import CassandraRepositoryHelper
 from .logger import log
 
@@ -65,6 +66,9 @@ class StatementProcessor(object):
         elif self.bank_name == "KOTAK":
             if self.source == "Saving" or self.source == "Current":
                 processor = KotakDebitStatementProcessor(self.filepath, self.source)
+        elif self.bank_name == "SBI":
+            if self.source == "Saving" or self.source == "Current":
+                processor = SbiDebitStatementProcessor(self.filepath, self.source)
 
         return processor
 

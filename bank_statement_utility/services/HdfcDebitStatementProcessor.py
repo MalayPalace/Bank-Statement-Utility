@@ -3,6 +3,7 @@ from datetime import datetime
 from ..parser.DelimitedParserWithHeader import DelimitedParserWithHeader
 from ..model.StatementDB import StatementDB
 from .BankStatementInterface import BankStatementInterface
+from ..Constants import COMMA
 
 
 class HdfcDebitStatementProcessor(BankStatementInterface):
@@ -11,7 +12,7 @@ class HdfcDebitStatementProcessor(BankStatementInterface):
         self.name = "HDFC"
         self.source = source
         self.filepath = filepath
-        self.parser = DelimitedParserWithHeader(filepath, "", "", -1)
+        self.parser = DelimitedParserWithHeader(filepath, COMMA, "", "", -1)
 
     def get_record(self):
         value_dict = self.parser.get_next_data()

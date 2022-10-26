@@ -13,7 +13,8 @@ class DelimitedParserWithHeader:
     skipping particular column is not applicable.
     """
 
-    def __init__(self, filename: str, record_start_with: str, record_end_with: str, skip_data_column: int):
+    def __init__(self, filename: str, delimiter: str, record_start_with: str, record_end_with: str, skip_data_column: int):
+        self.delimiter = delimiter
         self.record_start_with = record_start_with
         self.record_end_with = record_end_with
         self.skip_data_column = skip_data_column
@@ -29,7 +30,7 @@ class DelimitedParserWithHeader:
             while not line.startswith(self.record_start_with):
                 line = self.file.readline().strip()
 
-        line_array = line.split(",")
+        line_array = line.split(self.delimiter)
         return list(map(lambda l: l.strip(), line_array))  # stripping values across values
 
     def get_next_data(self):
@@ -50,7 +51,7 @@ class DelimitedParserWithHeader:
             return -1
 
         line_str = io.StringIO(line)
-        values = list(csv.reader(line_str, delimiter=','))[0]  # As it is a single line
+        values = list(csv.reader(line_str, delimiter=self.delimiter))[0]  # As it is a single line
 
         i = 0
         for j in range(0, len(values)):
