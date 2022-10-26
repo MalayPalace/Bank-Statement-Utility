@@ -11,7 +11,7 @@ class StatementDB:
         if ref_no:
             self.cheque_ref_number = ref_no
         else:
-            self.cheque_ref_number = 0
+            self.cheque_ref_number = "0"
         self.closing_balance = balance
         self.value_date = value_date
 

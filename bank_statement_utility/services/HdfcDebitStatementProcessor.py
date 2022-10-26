@@ -2,15 +2,16 @@ from decimal import Decimal
 from datetime import datetime
 from ..parser.DelimitedParserWithHeader import DelimitedParserWithHeader
 from ..model.StatementDB import StatementDB
+from .BankStatementInterface import BankStatementInterface
 
 
-class HdfcDebitStatementProcessor:
+class HdfcDebitStatementProcessor(BankStatementInterface):
 
     def __init__(self, filepath, source):
         self.name = "HDFC"
         self.source = source
         self.filepath = filepath
-        self.parser = DelimitedParserWithHeader(filepath)
+        self.parser = DelimitedParserWithHeader(filepath, "", "", -1)
 
     def get_record(self):
         value_dict = self.parser.get_next_data()
@@ -24,11 +25,11 @@ class HdfcDebitStatementProcessor:
     def map_record(self, value_dict):
         # Determine amount
         if Decimal(value_dict['Debit Amount']) > 0.00:
-            debit_amount = float(value_dict['Debit Amount'])
+            debit_amount = round(float(value_dict['Debit Amount']), 2)
             credit_amount = None
         else:
             debit_amount = None
-            credit_amount = float(value_dict['Credit Amount'])
+            credit_amount = round(float(value_dict['Credit Amount']), 2)
 
         # Date formatting
         trans_date = datetime.strptime(value_dict['Date'], '%d/%m/%y')
@@ -41,8 +42,8 @@ class HdfcDebitStatementProcessor:
             value_dict['Narration'],
             debit_amount,
             credit_amount,
-            int(value_dict['Chq/Ref Number']),
-            float(value_dict['Closing Balance']),
+            value_dict['Chq/Ref Number'],
+            round(float(value_dict['Closing Balance']), 2),
             value_date
         )
 
