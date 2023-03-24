@@ -1,4 +1,4 @@
-bank_names = ['HDFC', 'KOTAK', 'SBI']
+bank_names = ['HDFC', 'KOTAK', 'SBI', 'BOB']
 account_type = ['Saving', 'Current', 'Creditcard']
 
 COMMA = ","

@@ -3,6 +3,7 @@ import sys
 from .services.HdfcDebitStatementProcessor import HdfcDebitStatementProcessor
 from .services.KotakDebitStatementProcessor import KotakDebitStatementProcessor
 from .services.SbiDebitStatementProcessor import SbiDebitStatementProcessor
+from .services.BobDebitStatementProcessor import BobDebitStatementProcessor
 from .services.CassandraRepositoryHelper import CassandraRepositoryHelper
 from .logger import log
 
@@ -35,6 +36,8 @@ class StatementProcessor(object):
                         log.debug("Saving Record: {record}".format(record=statement_model))
                         self.cass_service.insert_data(statement_model)
                     else:
+                        # TODO: If it returns -1 in the very first loop, send out valid error message that
+                        #  file dont contain any valid record or not able to parse file correctly
                         iterable_flag = False
                 except AttributeError:
                     log.error("Error while conversion of Record {record}".format(record=record))
@@ -69,6 +72,9 @@ class StatementProcessor(object):
         elif self.bank_name == "SBI":
             if self.source == "Saving" or self.source == "Current":
                 processor = SbiDebitStatementProcessor(self.filepath, self.source)
+        elif self.bank_name == "BOB":
+            if self.source == "Saving" or self.source == "Current":
+                processor = BobDebitStatementProcessor(self.filepath, self.source)
 
         return processor
 

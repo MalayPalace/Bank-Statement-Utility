@@ -53,7 +53,7 @@ class XlsParserWithCustomHeader:
     def __add_values_with_data_header_moving_startpointer(self, key_value, row, data_header):
         # Read and assign column from data_header
         for column_num, column_name in data_header.items():
-            key_value[column_name] = row[column_num - 1].value
+            key_value[column_name] = row[column_num - 1].value.strip()
         self.record_start_with = self.record_start_with + 1
 
     def close(self):
