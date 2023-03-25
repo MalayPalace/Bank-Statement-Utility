@@ -28,8 +28,10 @@ class StatementProcessor(object):
             record = -1
 
             failed_records = []
-
+            # Counter to check if it was unable to parse file correctly
+            track_count = 0
             while iterable_flag:
+                track_count = track_count + 1
                 try:
                     record = processor.get_record()
                     if record != -1:
@@ -37,9 +39,11 @@ class StatementProcessor(object):
                         log.debug("Saving Record: {record}".format(record=statement_model))
                         self.cass_service.insert_data(statement_model)
                     else:
-                        # TODO: If it returns -1 in the very first loop, send out valid error message that
-                        #  file dont contain any valid record or not able to parse file correctly
+                        if track_count == 1:
+                            log.warn("File contain invalid record or parser was not able to parse file correctly")
+                            print("File contains invalid record or parser was not able to parse file correctly")
                         iterable_flag = False
+
                 except AttributeError:
                     log.error("Error while conversion of Record {record}".format(record=record))
                     failed_records.append(record)
