@@ -1,13 +1,16 @@
+import datetime
 import sys
 
+import pytz as pytz
 from cassandra.cluster import Cluster, PlainTextAuthProvider, NoHostAvailable
-from bank_statement_utility.logger import log
+
 from bank_statement_utility.config import config
-import datetime
+from bank_statement_utility.logger import log
 
 
 class CassandraRepositoryHelper:
     __ins_user = "App"
+    __IST_TIMEZONE = pytz.timezone('Asia/Kolkata')
 
     def __init__(self):
         contact_points = config['Cass']['contact.points']
@@ -52,7 +55,7 @@ class CassandraRepositoryHelper:
             data.closing_balance,
             data.cheque_ref_number,
             data.value_date,
-            datetime.datetime.now(),
+            datetime.datetime.now(tz=self.__IST_TIMEZONE),
             self.__ins_user
         ])
         self.session.execute(query)

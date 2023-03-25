@@ -1,6 +1,7 @@
 import sys
 
 from .services.HdfcDebitStatementProcessor import HdfcDebitStatementProcessor
+from .services.IdbiDebitStatmentProcessor import IdbiDebitStatementProcessor
 from .services.KotakDebitStatementProcessor import KotakDebitStatementProcessor
 from .services.SbiDebitStatementProcessor import SbiDebitStatementProcessor
 from .services.BobDebitStatementProcessor import BobDebitStatementProcessor
@@ -75,6 +76,9 @@ class StatementProcessor(object):
         elif self.bank_name == "BOB":
             if self.source == "Saving" or self.source == "Current":
                 processor = BobDebitStatementProcessor(self.filepath, self.source)
+        elif self.bank_name == "IDBI":
+            if self.source == "Saving" or self.source == "Current":
+                processor = IdbiDebitStatementProcessor(self.filepath, self.source)
 
         return processor
 

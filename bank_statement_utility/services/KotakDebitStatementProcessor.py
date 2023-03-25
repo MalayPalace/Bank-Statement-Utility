@@ -28,12 +28,12 @@ class KotakDebitStatementProcessor(BankStatementInterface):
 
     def map_record(self, value_dict):
         # Determine amount
-        if value_dict['Dr / Cr'].upper() == "DR":
-            debit_amount = round(float(remove_comma(value_dict['Amount'])), 2)
-            credit_amount = None
-        else:
+        if value_dict['Dr / Cr'].upper() == "CR":
             debit_amount = None
             credit_amount = round(float(remove_comma(value_dict['Amount'])), 2)
+        else:
+            debit_amount = round(float(remove_comma(value_dict['Amount'])), 2)
+            credit_amount = None
 
         # format Closing Balance
         closing_balance = round(float(remove_comma(value_dict['Balance'])), 2)

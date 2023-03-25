@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import time
 
 from bank_statement_utility.Constants import bank_names, account_type
 from bank_statement_utility.StatementProcessor import StatementProcessor
@@ -34,6 +35,7 @@ def main():
         log.error("File not found {path}".format(path=filename))
         sys.exit("No such File Exists. Exiting...")
 
+    start_time = time.time()
     statement_processor = StatementProcessor(bank_name, source, filename)
     response = statement_processor.process()
 
@@ -41,6 +43,7 @@ def main():
         print("App ended successfully with errors. Check logs for details")
     else:
         print("App ended successfully")
+    print("--- Time Taken: %s seconds ---" % (time.time() - start_time))
 
 
 if __name__ == '__main__':
