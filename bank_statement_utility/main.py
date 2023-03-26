@@ -10,7 +10,7 @@ from bank_statement_utility.logger import log
 from bank_statement_utility.version import __version__
 
 
-def main():
+def process():
     log.info(config['Basic']['appName'] + " version: " + __version__)
 
     # Initialize parser
@@ -46,5 +46,10 @@ def main():
     print("--- Time Taken: %s seconds ---" % (time.time() - start_time))
 
 
+# Main method to start execution from
+def main():
+    process()
+
+
 if __name__ == '__main__':
-    main()
+    process()

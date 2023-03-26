@@ -9,13 +9,13 @@ setup(
     name='bank_statement_utility',
     # some version number you may wish to add - increment this after every update
     version=__version__,
-    # this approach automatically finds out all directories (packages) - those must contain a file named __init__.py (can be empty)
+    # this approach automatically finds out all directories (packages) - those must contain a file named __init__.py
     packages=find_packages(),
     # include/exclude arguments take * as wildcard, for any sub-package names. installing requirements
     install_requires=requirements,
     entry_points={
         "console_scripts": [
-            "flatpak_external_url_checker=flatpak_external_url_checker:main",
+            "bank_statement_utility=bank_statement_utility:main",
         ]
     },
 )
