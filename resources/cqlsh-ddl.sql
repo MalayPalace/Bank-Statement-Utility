@@ -12,5 +12,5 @@ CREATE TABLE statement (
    value_date date,
    ins_date timestamp,
    ins_user text,
-   Primary Key ((bank_name, source, transaction_date), description, cheque_ref_number)
+   Primary Key ((bank_name, source, transaction_date), description, closing_balance)
 );

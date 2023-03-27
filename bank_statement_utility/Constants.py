@@ -6,3 +6,4 @@ account_type = ['Saving', 'Current', 'Creditcard']
 COMMA = ","
 TAB = "\t"
 APP_CONFIG_PATH = os.path.expanduser("~") + "/.local/share/bank-statement-app/"
+# APP_CONFIG_PATH = "./config/" # For local Testing

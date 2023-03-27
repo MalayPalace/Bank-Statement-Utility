@@ -59,7 +59,7 @@ class CassandraRepositoryHelper:
             self.__ins_user
         ])
         self.session.execute(query)
-        log.debug("Query executed: " + query.__str__())
+        # log.debug("Query executed: " + query.__str__())
 
     def close_db(self):
         if self.cluster:

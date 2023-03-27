@@ -31,15 +31,15 @@ class StatementProcessor(object):
             # Counter to check if it was unable to parse file correctly
             track_count = 0
             while iterable_flag:
-                track_count = track_count + 1
                 try:
                     record = processor.get_record()
                     if record != -1:
                         statement_model = processor.map_record(record)
                         log.debug("Saving Record: {record}".format(record=statement_model))
                         self.cass_service.insert_data(statement_model)
+                        track_count = track_count + 1
                     else:
-                        if track_count == 1:
+                        if track_count == 0:
                             log.warn("File contain invalid record or parser was not able to parse file correctly")
                             print("File contains invalid record or parser was not able to parse file correctly")
                         iterable_flag = False
@@ -55,6 +55,9 @@ class StatementProcessor(object):
                 self.log_fail_records(failed_records)
             else:
                 response = 0
+            log.info("Records Processed: " + str(track_count))
+            # Also printing to std output
+            print("Records Processed: " + str(track_count))
         else:
             log.error("No Processor defined for bank {bank_name} and source type {source}".format(bank_name=self.bank_name,
                                                                                                   source=self.source))
