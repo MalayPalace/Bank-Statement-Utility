@@ -28,7 +28,7 @@ class SbiDebitStatementProcessor(BankStatementInterface):
 
     def map_record(self, value_dict):
         # Determine amount
-        if value_dict['Debit'] and Decimal(value_dict['Debit']) > 0.00:
+        if value_dict['Debit'] and Decimal(remove_comma(value_dict['Debit'])) > 0.00:
             debit_amount = float(remove_comma(value_dict['Debit']))
             credit_amount = None
         else:

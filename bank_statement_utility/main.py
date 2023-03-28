@@ -40,7 +40,7 @@ def process():
     response = statement_processor.process()
 
     if response != 0:
-        print("App ended successfully with errors. Check logs for details")
+        print("App ended with errors. Check logs for details")
     else:
         print("App ended successfully")
     print("--- Time Taken: %s seconds ---" % (time.time() - start_time))
