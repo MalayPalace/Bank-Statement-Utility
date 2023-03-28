@@ -8,6 +8,7 @@ Below are the format information that the utility support for various banks. Dow
 2. Kotak (Saving and Current Account): `Download as CSV (Check Debit/Credit check box)`
 3. SBI (Saving & Current Acc): `Download in MS Excel format`
 4. Bank of Baroda (Saving & Current Acc): `Download in XLS format`
+_NOTE: Have observed that BOB change the column format quite frequently, so might have to change config settings._ 
 5. IDBI Bank (Saving & Current Acc): `Download in XLS format`
 
 ### Credit Card

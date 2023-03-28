@@ -3,6 +3,7 @@ from datetime import datetime
 
 from .BankStatementInterface import BankStatementInterface
 from .Utils import remove_comma
+from ..Constants import SPACE
 from ..config import config
 from ..model.StatementDB import StatementDB
 from ..parser.XlsParserWithCustomHeader import XlsParserWithCustomHeader
@@ -48,7 +49,13 @@ class IdbiDebitStatementProcessor(BankStatementInterface):
         closing_balance = float(remove_comma(value_dict['Balance (INR)']))
 
         # Date formatting
-        trans_date = datetime.strptime(value_dict['Txn Date'], '%d/%m/%Y %H:%M:%S')
+        txn_date = value_dict['Txn Date'].split(SPACE)[0]
+        try:
+            trans_date = datetime.strptime(txn_date, '%d/%m/%Y')
+        except ValueError:
+            # Faced scenario where in IDBI was providing date in below format
+            trans_date = datetime.strptime(txn_date, '%Y-%m-%d')
+
         value_date = datetime.strptime(value_dict['Value Date'], '%d/%m/%Y')
 
         record = StatementDB(
