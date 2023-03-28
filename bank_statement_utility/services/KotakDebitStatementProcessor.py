@@ -30,12 +30,12 @@ class KotakDebitStatementProcessor(BankStatementInterface):
 
     def map_record(self, value_dict):
         # Determine amount
-        if value_dict['Debit'] and Decimal(value_dict['Debit']) > 0.00:
-            debit_amount = round(float(value_dict['Debit']), 2)
+        if value_dict['Debit'] and Decimal(remove_comma(value_dict['Debit'])) > 0.00:
+            debit_amount = round(float(remove_comma(value_dict['Debit'])), 2)
             credit_amount = None
         else:
             debit_amount = None
-            credit_amount = round(float(value_dict['Credit']), 2)
+            credit_amount = round(float(remove_comma(value_dict['Credit'])), 2)
 
         # format Closing Balance
         closing_balance = round(float(remove_comma(value_dict['Balance'])), 2)
