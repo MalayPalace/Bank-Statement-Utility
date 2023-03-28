@@ -1,10 +1,12 @@
 from datetime import datetime
-from ..parser.DelimitedParserWithHeader import DelimitedParserWithHeader
-from ..model.StatementDB import StatementDB
+from decimal import Decimal
+
 from .BankStatementInterface import BankStatementInterface
-from ..config import config
 from .Utils import remove_comma
 from ..Constants import COMMA
+from ..config import config
+from ..model.StatementDB import StatementDB
+from ..parser.DelimitedParserWithHeader import DelimitedParserWithHeader
 
 
 class KotakDebitStatementProcessor(BankStatementInterface):
@@ -28,12 +30,12 @@ class KotakDebitStatementProcessor(BankStatementInterface):
 
     def map_record(self, value_dict):
         # Determine amount
-        if value_dict['Dr / Cr'].upper() == "CR":
-            debit_amount = None
-            credit_amount = round(float(remove_comma(value_dict['Amount'])), 2)
-        else:
-            debit_amount = round(float(remove_comma(value_dict['Amount'])), 2)
+        if value_dict['Debit'] and Decimal(value_dict['Debit']) > 0.00:
+            debit_amount = round(float(value_dict['Debit']), 2)
             credit_amount = None
+        else:
+            debit_amount = None
+            credit_amount = round(float(value_dict['Credit']), 2)
 
         # format Closing Balance
         closing_balance = round(float(remove_comma(value_dict['Balance'])), 2)
