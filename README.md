@@ -5,6 +5,9 @@
     <a href="https://www.python.org/">
         <img src="https://img.shields.io/badge/python-v3-blue.svg"
             alt="python"></a> &nbsp;
+    <a href="https://opensource.org/licenses/MIT">
+        <img src="https://img.shields.io/badge/license-MIT-blue.svg"
+            alt="MIT license"></a> &nbsp;
     <a href="https://github.com/MalayPalace/bank-statment-utility/commits/master">
         <img src="https://img.shields.io/badge/Maintained%3F-yes-blue.svg"
             alt="maintained"></a> &nbsp;
