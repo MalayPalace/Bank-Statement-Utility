@@ -1,7 +1,9 @@
 import xlrd
 
+from .IParser import IParser
 
-class XlsParserWithCustomHeader:
+
+class XlsParserWithCustomHeader(IParser):
 
     def __init__(self, filename: str, sheet_number: int, record_start_with: int, data_header_1: dict, data_header_2: dict):
         self.record_start_with = record_start_with

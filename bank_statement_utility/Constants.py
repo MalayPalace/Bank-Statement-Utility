@@ -1,6 +1,6 @@
 import os
 
-bank_names = ['HDFC', 'KOTAK', 'SBI', 'BOB', 'IDBI']
+bank_names = ['HDFC', 'KOTAK', 'SBI', 'BOB', 'IDBI', 'SVC']
 account_type = ['Saving', 'Current', 'Creditcard']
 
 COMMA = ","

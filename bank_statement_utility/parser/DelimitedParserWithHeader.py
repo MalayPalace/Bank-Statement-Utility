@@ -1,9 +1,11 @@
 import io
+
+from .IParser import IParser
 from ..logger import log
 import csv
 
 
-class DelimitedParserWithHeader:
+class DelimitedParserWithHeader(IParser):
     """
     Delimited Parser which will consider first non-blank line as header and then all other lines as records.
     Will take care of blank lines at the start of the file.

@@ -1,12 +1,13 @@
 import sys
 
+from .logger import log
+from .services.BobDebitStatementProcessor import BobDebitStatementProcessor
+from .services.CassandraRepositoryHelper import CassandraRepositoryHelper
 from .services.HdfcDebitStatementProcessor import HdfcDebitStatementProcessor
 from .services.IdbiDebitStatmentProcessor import IdbiDebitStatementProcessor
 from .services.KotakDebitStatementProcessor import KotakDebitStatementProcessor
 from .services.SbiDebitStatementProcessor import SbiDebitStatementProcessor
-from .services.BobDebitStatementProcessor import BobDebitStatementProcessor
-from .services.CassandraRepositoryHelper import CassandraRepositoryHelper
-from .logger import log
+from .services.SvcSavingStatementProcessor import SvcSavingStatementProcessor
 
 
 class StatementProcessor(object):
@@ -44,8 +45,9 @@ class StatementProcessor(object):
                             print("File contains invalid record or parser was not able to parse file correctly")
                         iterable_flag = False
 
-                except AttributeError:
+                except AttributeError as err:
                     log.error("Error while conversion of Record {record}".format(record=record))
+                    log.error("AttributeError {error} ".format(error=err.__str__()), exc_info=True)
                     failed_records.append(record)
                 except Exception as err:
                     log.error("Unknown Error occurred {error} ".format(error=err.__str__()), exc_info=True)
@@ -86,6 +88,9 @@ class StatementProcessor(object):
         elif self.bank_name == "IDBI":
             if self.source == "Saving" or self.source == "Current":
                 processor = IdbiDebitStatementProcessor(self.filepath, self.source)
+        elif self.bank_name == "SVC":
+            if self.source == "Saving" or self.source == "Current":
+                processor = SvcSavingStatementProcessor(self.filepath, self.source)
 
         return processor
 

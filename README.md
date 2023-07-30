@@ -39,6 +39,7 @@ Below are the format information that the utility support for various banks. Dow
 4. Bank of Baroda (Saving & Current Acc): `Download in XLS format`
    _NOTE: Have observed that BOB change the column format quite frequently, so might have to change config settings._
 5. IDBI Bank (Saving & Current Acc): `Download in XLS format`
+6. SVC Bank (Saving & Current Acc): `Download in XLS format`
 
 ## Pre-requisite:
 1. You will need running instance of Cassandra database for the Utility to work. Can use official Cassandra docker: https://hub.docker.com/_/cassandra/
