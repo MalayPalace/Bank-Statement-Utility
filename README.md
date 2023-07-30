@@ -66,6 +66,11 @@ OR
 python bank_statement_utility/main.py -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} filename
 ```
 
+## Build wheel file locally
+```bash
+python setup.py bdist_wheel
+```
+
 ## Road Map:
 Planning to add more banks and even Credit Card statements.
 
