@@ -13,7 +13,8 @@ class VerificationService(object):
     def process(self):
         result = self.cass_service.get_list_by_bank_and_source_ordered(self.bank_name, self.source,
                                                                        self.transaction_date)
-        log.info("Validating for Bank:{bank} and Account Type:{source}".format(bank=self.bank_name, source=self.source))
+        log.info("Validating for Bank:{bank} and Account Type:{source} and Start Transaction Date:{date}".format(
+            bank=self.bank_name, source=self.source, date=self.transaction_date.date()))
         validate_flag = False
 
         oldest_statement_row = result.__getitem__(0)

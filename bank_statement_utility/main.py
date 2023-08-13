@@ -24,6 +24,8 @@ def process():
     parser.add_argument("-t", "--type", help="Type of account. Saving|Current|Creditcard", type=str.capitalize,
                         choices=account_type, required=True)
     parser.add_argument("filename", help="Bank Statement file to read")
+    parser.add_argument("--start-date", help="Start Date for verification command. Should follow DD-MM-YYYY format",
+                        type=str, required=False)
 
     # Read arguments from command line
     args = parser.parse_args()
@@ -34,10 +36,17 @@ def process():
 
     # Using verify as command
     if filename and filename == "verify":
-        # TODO: Need to accept manual date from user
-        years = 3
-        no_of_days_in_year = 365
-        oldest_date = datetime.now() - timedelta(days=years * no_of_days_in_year)
+        date_from_str = args.start_date
+
+        if date_from_str:
+            try:
+                oldest_date = datetime.strptime(date_from_str, '%d-%m-%Y')
+            except ValueError as ex:
+                sys.exit(f"Date not in proper format: {ex}")
+        else:
+            years = 3
+            no_of_days_in_year = 365
+            oldest_date = datetime.now() - timedelta(days=years * no_of_days_in_year)
 
         start_time = time.time()
         verify_service = VerificationService(bank_name, source, oldest_date)
