@@ -1,7 +1,7 @@
 # Bank Statement Utility
 
 <!-- buttons -->
-<p align="left">
+<p>
     <a href="https://www.python.org/">
         <img src="https://img.shields.io/badge/python-v3-blue.svg"
             alt="python"></a> &nbsp;

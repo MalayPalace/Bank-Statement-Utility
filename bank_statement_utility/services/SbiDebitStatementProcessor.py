@@ -51,7 +51,8 @@ class SbiDebitStatementProcessor(BankStatementInterface):
             credit_amount,
             value_dict['Ref No./Cheque No.'],
             closing_balance,
-            value_date
+            value_date,
+            None
         )
 
         return record

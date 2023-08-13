@@ -53,7 +53,8 @@ class KotakDebitStatementProcessor(BankStatementInterface):
             credit_amount,
             value_dict['Chq / Ref No.'],
             closing_balance,
-            value_date
+            value_date,
+            None
         )
 
         return record

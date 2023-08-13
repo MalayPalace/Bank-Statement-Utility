@@ -67,7 +67,8 @@ class IdbiDebitStatementProcessor(BankStatementInterface):
             credit_amount,
             value_dict['Cheque No'],
             closing_balance,
-            value_date
+            value_date,
+            None
         )
 
         return record

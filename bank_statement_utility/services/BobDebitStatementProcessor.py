@@ -64,7 +64,8 @@ class BobDebitStatementProcessor(BankStatementInterface):
             credit_amount,
             value_dict['Instrument ID'],
             closing_balance,
-            trans_date
+            trans_date,
+            None
         )
 
         return record

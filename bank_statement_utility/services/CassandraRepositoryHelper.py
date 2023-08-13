@@ -4,8 +4,9 @@ import sys
 import pytz as pytz
 from cassandra.cluster import Cluster, PlainTextAuthProvider, NoHostAvailable
 
-from bank_statement_utility.config import config
-from bank_statement_utility.logger import log
+from ..config import config
+from ..logger import log
+from ..model.StatementDB import StatementDB
 
 
 class CassandraRepositoryHelper:
@@ -42,7 +43,8 @@ class CassandraRepositoryHelper:
     def insert_data(self, data):
         stmt = self.session.prepare(
             "INSERT INTO bank_statement.statement(bank_name,source,transaction_date,description,debit_amount,credit_amount,"
-            "closing_balance,cheque_ref_number,value_date,ins_date,ins_user) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+            "closing_balance,cheque_ref_number,value_date,ins_date,ins_user) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?)"
         )
 
         query = stmt.bind([
@@ -61,6 +63,39 @@ class CassandraRepositoryHelper:
         self.session.execute(query)
         # log.debug("Query executed: " + query.__str__())
 
+    def get_list_by_bank_and_source_ordered(self, bank_name: str, source: str, transaction_date: datetime) -> (
+            list)[StatementDB]:
+        query = (
+            "SELECT bank_name,source,transaction_date,description,debit_amount,credit_amount,closing_balance,ins_date "
+            "FROM bank_statement.statement "
+            "WHERE bank_name = %s AND source = %s AND transaction_date >= %s "
+            "ALLOW FILTERING;")
+
+        # Convert the datetime to ISO 8601 format (string)
+        iso_start_date = transaction_date.date().isoformat()
+
+        # Execute and Convert the ResultSet to a list for sorting
+        result = self.session.execute(query, [bank_name, source, iso_start_date])
+
+        if result:
+            # Define a custom sorting key function based on two columns
+            def sorting_key(row):
+                return row.transaction_date, row.ins_date
+
+            # Sort the result list using the custom sorting key
+            sorted_result = sorted(list(result), key=sorting_key)
+
+            # Convert to StatementDb Object
+            statement_obj = [StatementDB.to_instance(obj.bank_name, obj.source, obj.transaction_date, obj.description,
+                                                     obj.debit_amount, obj.credit_amount, None, obj.closing_balance,
+                                                     None, obj.ins_date) for
+                             obj in sorted_result]
+            return statement_obj
+
+        return result
+
     def close_db(self):
+        if self.session:
+            self.session.shutdown()
         if self.cluster:
             self.cluster.shutdown()

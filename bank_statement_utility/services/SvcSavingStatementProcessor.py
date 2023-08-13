@@ -67,7 +67,8 @@ class SvcSavingStatementProcessor(BankStatementInterface):
             credit_amount,
             cheque_no,
             closing_balance,
-            trans_date
+            trans_date,
+            None
         )
 
         return record

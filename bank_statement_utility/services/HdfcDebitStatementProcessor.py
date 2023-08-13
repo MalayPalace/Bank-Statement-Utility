@@ -45,7 +45,8 @@ class HdfcDebitStatementProcessor(BankStatementInterface):
             credit_amount,
             value_dict['Chq/Ref Number'],
             round(float(value_dict['Closing Balance']), 2),
-            value_date
+            value_date,
+            None
         )
 
         return record
