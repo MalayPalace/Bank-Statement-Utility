@@ -12,6 +12,7 @@ from ..model.StatementDB import StatementDB
 class CassandraRepositoryHelper:
     __ins_user = "App"
     __IST_TIMEZONE = pytz.timezone('Asia/Kolkata')
+    __DB_TABLE_NAME = "bank_statement.statement"
 
     def __init__(self):
         contact_points = config['Cass']['contact.points']
@@ -42,9 +43,9 @@ class CassandraRepositoryHelper:
 
     def insert_data(self, data):
         stmt = self.session.prepare(
-            "INSERT INTO bank_statement.statement(bank_name,source,transaction_date,description,debit_amount,credit_amount,"
-            "closing_balance,cheque_ref_number,value_date,ins_date,ins_user) "
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+            "INSERT INTO {0} (bank_name,source,transaction_date,description,debit_amount,credit_amount,closing_balance,"
+            "cheque_ref_number,value_date,ins_date,ins_user) VALUES (?,?,?,?,?,?,?,?,?,?,?)".format(
+                self.__DB_TABLE_NAME)
         )
 
         query = stmt.bind([
@@ -67,9 +68,9 @@ class CassandraRepositoryHelper:
             list)[StatementDB]:
         query = (
             "SELECT bank_name,source,transaction_date,description,debit_amount,credit_amount,closing_balance,ins_date "
-            "FROM bank_statement.statement "
-            "WHERE bank_name = %s AND source = %s AND transaction_date >= %s "
-            "ALLOW FILTERING;")
+            "FROM {0} "
+            "WHERE bank_name = %s AND source = %s AND transaction_date >= %s ALLOW FILTERING;".format(
+                self.__DB_TABLE_NAME))
 
         # Convert the datetime to ISO 8601 format (string)
         iso_start_date = transaction_date.date().isoformat()
@@ -84,6 +85,31 @@ class CassandraRepositoryHelper:
 
             # Sort the result list using the custom sorting key
             sorted_result = sorted(list(result), key=sorting_key)
+
+            # Convert to StatementDb Object
+            statement_obj = [StatementDB.to_instance(obj.bank_name, obj.source, obj.transaction_date, obj.description,
+                                                     obj.debit_amount, obj.credit_amount, None, obj.closing_balance,
+                                                     None, obj.ins_date) for
+                             obj in sorted_result]
+            return statement_obj
+
+        return result
+
+    def get_all_ordered_by_latest(self) -> list[StatementDB]:
+        query = (
+            "SELECT transaction_date,bank_name,source,debit_amount,credit_amount,description,closing_balance,cheque_ref_number,ins_date "
+            "FROM {0}".format(
+                self.__DB_TABLE_NAME))
+
+        # Execute and Convert the ResultSet to a list for sorting
+        result = self.session.execute(query)
+
+        if result:
+            def sorting_key(row):
+                return row.transaction_date, row.ins_date
+
+            # Sort the result list using the custom sorting key
+            sorted_result = sorted(list(result), key=sorting_key, reverse=True)
 
             # Convert to StatementDb Object
             statement_obj = [StatementDB.to_instance(obj.bank_name, obj.source, obj.transaction_date, obj.description,
