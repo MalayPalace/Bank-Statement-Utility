@@ -24,7 +24,7 @@ which can be queried upon.
 ## Background
 
 Have created various configurable parser which can read and store bank statement data to database. It is resilient against any
-failure and can log the data which failed storing to database. Re-executable as in same file can be reprocessed wihtout any
+failure and can log the data which failed storing to database. Re-executable as in same file can be reprocessed without any
 duplication issue.
 
 ## Banks which are currently supported:
@@ -37,7 +37,7 @@ Below are the format information that the utility support for various banks. Dow
 2. Kotak (Saving and Current Account): `Download as CSV (Check Debit/Credit check box)`
 3. SBI (Saving & Current Acc): `Download in MS Excel format`
 4. Bank of Baroda (Saving & Current Acc): `Download in XLS format`
-   _NOTE: Have observed that BOB change the column format quite frequently, so might have to change config settings._
+   <br/>_NOTE: Have observed that BOB change the column format quite frequently, so might have to change config settings._
 5. IDBI Bank (Saving & Current Acc): `Download in XLS format`
 6. SVC Bank (Saving & Current Acc): `Download in XLS format`
 
@@ -45,10 +45,10 @@ Below are the format information that the utility support for various banks. Dow
 1. You will need running instance of Cassandra database for the Utility to work. Can use official Cassandra docker: https://hub.docker.com/_/cassandra/
 2. Create necessary Cassadra keyspace and table by executing ddl: `resource/cqlsh-ddl.sql`
 3. Edit the `config/config.ini` file with your Cassandra credentials.
-4. Config File need to copied to as local user location for Utility to read it. Execute `install_config_script.sh` file to copy it to target location <i>(Had created primarily on Ubuntu Linux)</i>. For Windows had to manually copy the file. 
+4. Config File need to copied to `${HOME}/.local/share/bank-statement-app/` for Utility to read it. Execute `install_config_script.sh` file to copy it to target location <i>(Had created primarily on Linux)</i>. For Windows had to manually copy the file. 
 5. Install the wheel file directly:
 ```bash
-pip install dist/bank_statement_utility-1.0.0-py3-none-any.whl
+pip install dist/bank_statement_utility-<latest-version>-py3-none-any.whl
 ```
 OR install additional library required for the project from requirement.txt  
 ```bash
@@ -59,12 +59,35 @@ pip install -r requirements.txt
 Execute the `main.py` from project folder or if you have installed wheel and pip install path is in your Environmental Variable then execute directly `bank_statement_utility`
 
 ```bash
-bank_statement_utility -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} filename
+bank_statement_utility {save,verify,export} -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} filename
 ```
 OR
 ```bash
-python bank_statement_utility/main.py -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} filename
+python bank_statement_utility/main.py {save,verify,export} -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} filename
 ```
+### Commands Supported:
+1. <b><u>save</u></b>: To process the statement file and store to the database.
+   <br/><u>Usage</u>:
+   ```
+   python bank_statement_utility/main.py save -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} filename
+   ```
+2. <b><u>verify</u></b>: Validate the transactions by comparing the closing balance between transactions. If it fails it might be some transaction of debit or credit might be missing. Script output will print the amount difference found.
+   <br/><u>Usage</u>:
+   ```
+   python bank_statement_utility/main.py verify -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard}
+   
+   ```
+   <b>OR</b><br/> can also specify `--start-from` parameter followed by date in DD-MM-YYYY format to validate transactions only between supplied date and current date.
+   <br/><u>Usage</u>:
+   ```
+   python bank_statement_utility/main.py verify -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} --start-from DD-MM-YYYY
+   
+   ```
+3. <b><u>export</u></b>: Export transactions in csv file sorted by lastest transaction date.
+   <br/><u>Usage</u>:
+   ```
+   python bank_statement_utility/main.py export
+   ```
 
 ## Build wheel file locally
 ```bash
@@ -75,7 +98,8 @@ python setup.py bdist_wheel
 Planning to add more banks and even Credit Card statements.
 
 ## Dependencies:
-Thanks to below library creator:
+Utility is using below following dependencies.
+Thanks to library creator & contributors
 <p>
 <a href="https://github.com/datastax/python-driver">DataStax Driver for Apache Cassandra</a><br>
 <a href="https://pypi.org/project/xlrd/">xlrd</a><br>
