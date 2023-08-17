@@ -113,7 +113,8 @@ class CassandraRepositoryHelper:
 
             # Convert to StatementDb Object
             statement_obj = [StatementDB.to_instance(obj.bank_name, obj.source, obj.transaction_date, obj.description,
-                                                     obj.debit_amount, obj.credit_amount, None, obj.closing_balance,
+                                                     obj.debit_amount, obj.credit_amount, obj.cheque_ref_number,
+                                                     obj.closing_balance,
                                                      None, obj.ins_date) for
                              obj in sorted_result]
             return statement_obj
