@@ -17,6 +17,11 @@ class VerificationService(object):
             bank=self.bank_name, source=self.source, date=self.transaction_date.date()))
         validate_flag = False
 
+        if not result or not list(result):
+            log.info("No Record Returned:{result}".format(result=result))
+            print("No Record Returned")
+            return validate_flag
+
         oldest_statement_row = result.__getitem__(0)
         newest_statement_row = result.__getitem__(len(result) - 1)
 
