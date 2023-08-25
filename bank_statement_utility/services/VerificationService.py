@@ -66,7 +66,7 @@ class VerificationService(object):
         return validate_flag
 
     @classmethod
-    def __calculate_difference_of_balance(self, newest_statement_row, oldest_statement_row, total_credit_amt,
+    def __calculate_difference_of_balance(cls, newest_statement_row, oldest_statement_row, total_credit_amt,
                                           total_debit_amt):
         closing_amt = float(oldest_statement_row.closing_balance)
 

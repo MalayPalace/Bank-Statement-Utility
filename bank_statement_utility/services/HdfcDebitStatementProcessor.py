@@ -28,9 +28,17 @@ class HdfcDebitStatementProcessor(BankStatementInterface):
         if Decimal(value_dict['Debit Amount']) > 0.00:
             debit_amount = round(float(value_dict['Debit Amount']), 2)
             credit_amount = None
-        else:
+        elif Decimal(value_dict['Debit Amount']) < 0.00:
+            debit_amount = None
+            credit_amount = round(abs(float(value_dict['Debit Amount'])), 2)
+        elif Decimal(value_dict['Credit Amount']) > 0.00:
             debit_amount = None
             credit_amount = round(float(value_dict['Credit Amount']), 2)
+        elif Decimal(value_dict['Credit Amount']) < 0.00:
+            debit_amount = round(abs(float(value_dict['Credit Amount'])), 2)
+            credit_amount = None
+        else:
+            raise AttributeError("Both Credit and Debit fields are zero")
 
         # Date formatting
         trans_date = datetime.strptime(value_dict['Date'], '%d/%m/%y')
