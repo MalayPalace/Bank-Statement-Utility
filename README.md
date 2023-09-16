@@ -42,17 +42,22 @@ Below are the format information that the utility support for various banks. Dow
 6. SVC Bank (Saving & Current Acc): `Download in XLS format`
 
 ## Pre-requisite:
-1. You will need running instance of Cassandra database for the Utility to work. Can use official Cassandra docker: https://hub.docker.com/_/cassandra/
-2. Create necessary Cassadra keyspace and table by executing ddl: `resource/cqlsh-ddl.sql`
-3. Edit the `config/config.ini` file with your Cassandra credentials.
-4. Config File need to copied to `${HOME}/.local/share/bank-statement-app/` for Utility to read it. Execute `install_config_script.sh` file to copy it to target location <i>(Had created primarily on Linux)</i>. For Windows had to manually copy the file. 
-5. Install the wheel file directly:
+1. Docker & Docker-compose (for running cassandra database)
+2. Python & pip
+
+## Installation:
+1. Execute docker-compose for installing and running Cassandra container 
 ```bash
-pip install dist/bank_statement_utility-<latest-version>-py3-none-any.whl
+cd Docker
+docker-compose up -d
 ```
-OR install additional library required for the project from requirement.txt  
+2. Create necessary Cassadra keyspace and table by executing ddl: `resource/cqlsh-ddl.sql`
+3. Download the latest release whl file and config.ini from the Release page (https://github.com/MalayPalace/Bank-Statement-Utility/releases)
+4. Edit the `config.ini` file with your Cassandra credentials.
+5. Config File need to copied to `${HOME}/.local/share/bank-statement-app/` for Utility to read it. Execute `install_config_script.sh` file to copy it to target location <i>(Had created primarily for Linux)</i>. For Windows had to manually copy the file.
+6. Install the wheel file directly:
 ```bash
-pip install -r requirements.txt
+pip install bank_statement_utility-<latest-version>-py3-none-any.whl
 ```
 
 ## Basic Usage:
@@ -65,6 +70,7 @@ OR
 ```bash
 python bank_statement_utility/main.py {save,verify,export} -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} filename
 ```
+
 ### Commands Supported:
 1. <b><u>save</u></b>: To process the statement file and store to the database.
    <br/><u>Usage</u>:

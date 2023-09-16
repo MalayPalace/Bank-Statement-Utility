@@ -1,0 +1,10 @@
+services:
+  n1_green:
+    image: cassandra:latest
+    container_name: cassandra
+    networks:
+      - cluster
+    ports:
+      - "9042:9042"
+networks:
+  cluster:
