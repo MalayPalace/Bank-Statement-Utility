@@ -33,13 +33,18 @@ Below are the format information that the utility support for various banks. Dow
 
 ### For Saving/Current Account
 
-1. HDFC (Saving and Current Account): `Download as Delimited`
-2. Kotak (Saving and Current Account): `Download as CSV (Check Debit/Credit check box)`
-3. SBI (Saving & Current Acc): `Download in MS Excel format`
-4. Bank of Baroda (Saving & Current Acc): `Download in XLS format`
-   <br/>_NOTE: Have observed that BOB change the column format quite frequently, so might have to change config settings._
-5. IDBI Bank (Saving & Current Acc): `Download in XLS format`
-6. SVC Bank (Saving & Current Acc): `Download in XLS format`
+| Bank Name       |      Account Type      | File Format |            Statement/Download Type             |
+|-----------------|:----------------------:|:-----------:|:----------------------------------------------:|
+| HDFC Bank       | Saving/Current Account |     txt     |   Download as Delimited (through Netbanking)   |
+| Kotak Bank      | Saving/Current Account |     csv     | Download as CSV (Check Debit/Credit check box) |
+|                 |      Credit Card       |     pdf     |        Statement received through Email        |
+| SBI Bank        | Saving/Current Account |     xls     |          Download in MS Excel format           |
+|                 |      Credit Card       |     pdf     |        Statement received through Email        |
+| Bank of Baroda* | Saving/Current Account |     xls     |            Download in XLS format              |
+| IDBI Bank       | Saving/Current Account |     xls     |            Download in XLS format              |
+| SVC Bank        | Saving/Current Account |     xls     |            Download in XLS format              |
+
+<i>* Have observed that Bank of Baroda changes the column format quite frequently, so might have to change config settings.</i>
 
 ## Pre-requisite:
 1. Docker & Docker-compose (for running cassandra database)
@@ -110,3 +115,4 @@ Thanks to library creator & contributors
 <a href="https://github.com/datastax/python-driver">DataStax Driver for Apache Cassandra</a><br>
 <a href="https://pypi.org/project/xlrd/">xlrd</a><br>
 <a href="https://pypi.org/project/pytz/">pytz</a><br>
+<a href="https://pypi.org/project/pypdf/">pypdf</a><br>

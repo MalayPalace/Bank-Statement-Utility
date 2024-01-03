@@ -8,7 +8,8 @@ from .services.IdbiDebitStatmentProcessor import IdbiDebitStatementProcessor
 from .services.KotakDebitStatementProcessor import KotakDebitStatementProcessor
 from .services.SbiDebitStatementProcessor import SbiDebitStatementProcessor
 from .services.SvcSavingStatementProcessor import SvcSavingStatementProcessor
-
+from .services.KotakCcStatementProcessor import KotakCcStatementProcessor
+from .services.SbiCcStatementProcessor import SbiCcStatementProcessor
 
 class StatementProcessor(object):
 
@@ -76,18 +77,27 @@ class StatementProcessor(object):
         if self.bank_name == "HDFC":
             if self.source == "Saving" or self.source == "Current":
                 processor = HdfcDebitStatementProcessor(self.filepath, self.source)
+
         elif self.bank_name == "KOTAK":
             if self.source == "Saving" or self.source == "Current":
                 processor = KotakDebitStatementProcessor(self.filepath, self.source)
+            elif self.source == "Creditcard":
+                processor = KotakCcStatementProcessor(self.filepath, self.source)
+
         elif self.bank_name == "SBI":
             if self.source == "Saving" or self.source == "Current":
                 processor = SbiDebitStatementProcessor(self.filepath, self.source)
+            elif self.source == "Creditcard":
+                processor = SbiCcStatementProcessor(self.filepath, self.source)
+
         elif self.bank_name == "BOB":
             if self.source == "Saving" or self.source == "Current":
                 processor = BobDebitStatementProcessor(self.filepath, self.source)
+
         elif self.bank_name == "IDBI":
             if self.source == "Saving" or self.source == "Current":
                 processor = IdbiDebitStatementProcessor(self.filepath, self.source)
+
         elif self.bank_name == "SVC":
             if self.source == "Saving" or self.source == "Current":
                 processor = SvcSavingStatementProcessor(self.filepath, self.source)
