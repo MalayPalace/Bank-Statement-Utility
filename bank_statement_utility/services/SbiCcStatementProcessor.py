@@ -5,7 +5,7 @@ from .Utils import remove_comma, append_str
 from ..Constants import CREDIT_CARD_SUFFIX
 from ..config import config
 from ..model.StatementDB import StatementDB
-from ..parser.PdfParserWithCustomHeader import PdfParserWithCustomHeader
+from ..parser.SbiCustomPdfParser import SbiCustomPdfParser
 
 
 class SbiCcStatementProcessor(BankStatementInterface):
@@ -22,7 +22,7 @@ class SbiCcStatementProcessor(BankStatementInterface):
         if data_headers:
             data_header_list = data_headers.split(",")
 
-        self.parser = PdfParserWithCustomHeader(filepath, config[config_name][
+        self.parser = SbiCustomPdfParser(filepath, config[config_name][
             'record_selector_regex'], data_header_list)
 
     def get_record(self):
@@ -50,7 +50,11 @@ class SbiCcStatementProcessor(BankStatementInterface):
         closing_balance = 0.00
 
         # Date formatting
-        trans_date = datetime.strptime(value_dict['Date'], '%d %b %y')
+        try:
+            trans_date = datetime.strptime(value_dict['Date'], '%d %b %y')
+        except ValueError:
+            # Fallback on whole year format
+            trans_date = datetime.strptime(value_dict['Date'], '%d %b %Y')
 
         record = StatementDB(
             self.name,
