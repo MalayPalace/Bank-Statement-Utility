@@ -42,12 +42,11 @@ class KotakCcStatementProcessor(BankStatementInterface):
             debit_amount = None
             sliced_amount = amount[0:len(amount) - 3]
             credit_amount = round(float(remove_comma(sliced_amount)), 2)
+            closing_balance = credit_amount
         else:
             debit_amount = round(float(remove_comma(amount)), 2)
             credit_amount = None
-
-        # Hard coding Closing Balance as its CreditCard
-        closing_balance = 0.00
+            closing_balance = -debit_amount
 
         # Date formatting
         trans_date = datetime.strptime(value_dict['Date'], '%d/%m/%Y')

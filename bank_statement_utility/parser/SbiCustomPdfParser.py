@@ -5,7 +5,7 @@ from ..logger import log
 
 
 class SbiCustomPdfParser(PdfParserWithCustomHeader):
-    TRANSACTION_DATE_REGEX = '^for Statement dated ([0-9]{1,2} [A-Z][a-z]{2} [0-9]{4})'
+    TRANSACTION_DATE_REGEX = 'for Statement dated ([0-9]{1,2} [A-Z][a-z]{2} [0-9]{4})'
     IGST_TRANS_REGEX = '^(IGST DB @ [0-9]{1,2}[.][0-9]{2}[%]) ([0-9,]+[.][0-9]{2} [DC])'
 
     def __init__(self, filename: str, record_selector_regex: str, data_headers: list):
@@ -25,7 +25,7 @@ class SbiCustomPdfParser(PdfParserWithCustomHeader):
                     if record:
                         return record
                 except Exception:
-                    log.debug('Swallowing Exception while searching IGST Transaction')
+                    log.info('Swallowing Exception while searching IGST Transaction', exc_info=True)
             else:
                 return -1
 

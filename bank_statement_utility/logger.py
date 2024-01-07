@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import datetime
 
 from .Constants import APP_CONFIG_PATH
 
@@ -13,14 +14,15 @@ def check_or_create_base_app_path(app_base_path: str):
 
 # logging configs #######
 log_path = check_or_create_base_app_path(APP_CONFIG_PATH + "Log/")
-log_file_name = log_path + "bank-statement-app.log"
+log_file_name = log_path + "bank-statement-app-{datestr}.log"
+output_filename_path = log_file_name.format(datestr=datetime.today().strftime('%Y%m%d'))
 log_console_level = logging.CRITICAL
 log_file_level = logging.DEBUG
 log_format = "%(levelname)s [%(asctime)s] {%(filename)s:%(lineno)d} - %(message)s"
 
 # set up logging to file
 logging.basicConfig(
-    filename=log_file_name,
+    filename=output_filename_path,
     level=log_file_level,
     format=log_format
 )

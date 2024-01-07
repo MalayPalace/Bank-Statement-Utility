@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import xlrd
 
 from .BankStatementInterface import BankStatementInterface
@@ -53,7 +55,11 @@ class SvcSavingStatementProcessor(BankStatementInterface):
         closing_balance = float(value_dict['Balance'])
 
         # Date formatting
-        trans_date = xlrd.xldate.xldate_as_datetime(value_dict['Date'], self.parser.file.datemode)
+        try:
+            trans_date = xlrd.xldate.xldate_as_datetime(value_dict['Date'], self.parser.file.datemode)
+        except TypeError:
+            # Fallback on String formatting
+            trans_date = datetime.strptime(value_dict['Date'], '%d %b %Y')
 
         # Cheque no
         cheque_no = str(int(value_dict['Chq No.']))

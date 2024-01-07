@@ -40,7 +40,7 @@ Below are the format information that the utility support for various banks. Dow
 |                 |      Credit Card       |     pdf     |        Statement received through Email        |
 | SBI Bank        | Saving/Current Account |     xls     |          Download in MS Excel format           |
 |                 |      Credit Card       |     pdf     |        Statement received through Email        |
-| Bank of Baroda* | Saving/Current Account |     xls     |            Download in XLS format              |
+| Bank of Baroda* | Saving/Current Account |     xls     |   Download in XLS format (Mini Statement)      |
 | IDBI Bank       | Saving/Current Account |     xls     |            Download in XLS format              |
 | SVC Bank        | Saving/Current Account |     xls     |            Download in XLS format              |
 

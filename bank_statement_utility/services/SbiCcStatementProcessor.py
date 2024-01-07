@@ -42,12 +42,11 @@ class SbiCcStatementProcessor(BankStatementInterface):
         if amount and amount.endswith(' C'):
             debit_amount = None
             credit_amount = round(float(remove_comma(sliced_amount)), 2)
+            closing_balance = credit_amount
         else:
             debit_amount = round(float(remove_comma(sliced_amount)), 2)
             credit_amount = None
-
-        # Hard coding Closing Balance as its CreditCard
-        closing_balance = 0.00
+            closing_balance = -debit_amount
 
         # Date formatting
         try:
