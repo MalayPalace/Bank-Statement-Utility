@@ -23,7 +23,7 @@ class SbiCcStatementProcessor(BankStatementInterface):
             data_header_list = data_headers.split(",")
 
         self.parser = SbiCustomPdfParser(filepath, config[config_name][
-            'record_selector_regex'], config[config_name]['IGST_selector_regex'], data_header_list)
+            'record_selector_regex'], config[config_name]['igst_selector_regex'], data_header_list)
 
     def get_record(self):
         value_dict = self.parser.get_next_data()

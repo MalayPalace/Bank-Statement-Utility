@@ -37,15 +37,21 @@ Below are the format information that the utility support for various banks. Dow
 |-----------------|:----------------------:|:-----------:|:----------------------------------------------:|
 | HDFC Bank       | Saving/Current Account |     txt     |   Download as Delimited (through Netbanking)   |
 | Kotak Bank      | Saving/Current Account |     csv     | Download as CSV (Check Debit/Credit check box) |
-|                 |      Credit Card       |     pdf     |        Statement received through Email        |
-| SBI Bank**      | Saving/Current Account |     xls     |          Download in MS Excel format           |
-|                 |      Credit Card       |     pdf     |        Statement received through Email        |
+| SBI Bank        | Saving/Current Account |     xls     |          Download in MS Excel format           |
 | Bank of Baroda* | Saving/Current Account |     xls     |   Download in XLS format (Mini Statement)      |
 | IDBI Bank       | Saving/Current Account |     xls     |            Download in XLS format              |
 | SVC Bank        | Saving/Current Account |     xls     |            Download in XLS format              |
 
 <i>* Have observed that Bank of Baroda changes the column format quite frequently, so might have to change config settings.</i>
-<i>** <u>Limitation</u>: SBI statement can have mutiple Rent charges of same amount on same date with description which while storing to Db will be overwritten due to non-uniqueness. Will have to handle such scenario manually. </i>
+
+### For Credit Card Statement
+
+| Bank Name     |      Account Type      | File Format |            Statement/Download Type             |
+|---------------|:----------------------:|:-----------:|:----------------------------------------------:|
+| Kotak Bank**  |      Credit Card       |     pdf     |        Statement received through Email        |
+| SBI Bank**    |      Credit Card       |     pdf     |        Statement received through Email        |
+
+<i>** <u>Limitation:</u> Credit Card Statement can have duplicate scenario where it transaction can be of same amount on same date with same description and since it doesn't has closing balance, while storing to Db it will be overwritten due to non-uniqueness. Will have to handle such scenario manually. </i>
 
 ## Pre-requisite:
 1. Docker & Docker-compose (for running cassandra database)

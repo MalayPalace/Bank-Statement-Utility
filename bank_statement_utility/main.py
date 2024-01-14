@@ -14,7 +14,7 @@ from bank_statement_utility.version import __version__
 
 
 def process():
-    log.info(config['Basic']['appName'] + " version: " + __version__)
+    log.info(config['Basic']['appname'] + " version: " + __version__)
 
     # Initialize parser
     parser = argparse.ArgumentParser()
