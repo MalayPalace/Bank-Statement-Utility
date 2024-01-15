@@ -65,12 +65,12 @@ docker-compose up -d
 ```
 2. Create necessary Cassadra keyspace and table by executing ddl: `resource/cqlsh-ddl.sql`
 3. Download the latest release whl file and config.ini from the Release page (https://github.com/MalayPalace/Bank-Statement-Utility/releases)
-4. Edit the `config.ini` file with your Cassandra credentials.
-5. Config File need to copied to `${HOME}/.local/share/bank-statement-app/` for Utility to read it. Execute `install_config_script.sh` file to copy it to target location <i>(Had created primarily for Linux)</i>. For Windows had to manually copy the file.
-6. Install the wheel file directly:
+4. Install the wheel file directly:
 ```bash
 pip install bank_statement_utility-<latest-version>-py3-none-any.whl
 ```
+5. Utility will create Config File when it executes first time at `${HOME}/.local/share/bank-statement-app/config.ini` for Utility to read it. 
+   <br><i>Manually Edit config.ini file to add Cassandra Username/password</i>
 
 ## Basic Usage:
 Execute the `main.py` from project folder or if you have installed wheel and pip install path is in your Environmental Variable then execute directly `bank_statement_utility`
