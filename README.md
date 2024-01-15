@@ -3,7 +3,7 @@
 <!-- buttons -->
 <p>
     <a href="https://www.python.org/">
-        <img src="https://img.shields.io/badge/python-v3-blue.svg"
+        <img src="https://img.shields.io/badge/python-v3.11.x-blue.svg"
             alt="python"></a> &nbsp;
     <a href="https://opensource.org/licenses/MIT">
         <img src="https://img.shields.io/badge/license-MIT-blue.svg"
