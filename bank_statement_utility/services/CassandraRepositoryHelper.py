@@ -4,6 +4,7 @@ import sys
 import pytz as pytz
 from cassandra.cluster import Cluster, PlainTextAuthProvider, NoHostAvailable
 
+from .Utils import is_ui_execution
 from ..config import config
 from ..logger import log
 from ..model.StatementDB import StatementDB
@@ -35,11 +36,18 @@ class CassandraRepositoryHelper:
             log.error("Unable to connect to DB on {host}:{port} with user:{user}. DB host not available".format(
                 host=contact_points,
                 port=port, user=username))
-            sys.exit("Unable to connect to DB. Check logs for more details. Exiting...")
+
+            if is_ui_execution():
+                raise IOError("Unable to connect to DB. Check logs for more details")
+            else:
+                sys.exit("Unable to connect to DB. Check logs for more details. Exiting...")
         except Exception as err:
             log.error("Unknown error occur while connecting to DB. Error:{error}".format(error=err.__str__()),
                       exc_info=True)
-            sys.exit("Unknown error occur while connecting to DB. Check logs for more details. Exiting...")
+            if is_ui_execution():
+                raise IOError("Unknown error occur while connecting to DB. Check logs for more details.")
+            else:
+                sys.exit("Unknown error occur while connecting to DB. Check logs for more details. Exiting...")
 
     def insert_data(self, data):
         stmt = self.session.prepare(
