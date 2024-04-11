@@ -58,11 +58,7 @@ class MainScreenView:
         self.top = top
         self.combobox_bankname = tk.StringVar()
         self.radioButton_account_type = tk.StringVar()
-        self.print_out = StringIO()
         # ============= Variables to hold data ======
-
-        # Intercept and set stdout to our StringIO instance
-        sys.stdout = self.print_out
 
         self.menubar = tk.Menu(top, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
         top.configure(menu=self.menubar)
@@ -214,20 +210,23 @@ class MainScreenView:
 
     def process_file(self):
         try:
-            self.__validate_fields()
-
-            start_time = time()
-            statement_processor = StatementProcessor(self.TComboboxBankName, self.radioButton_account_type,
-                                                     self.TEntryUploadPath)
-            response = statement_processor.process()
-
             # Clear previous Output
             self.TTextOutput.delete("0.0", tk.END)
 
+            self.__validate_fields()
+
+            # Intercept and set stdout to our StringIO instance
+            print_out = StringIO()
+            sys.stdout = print_out
+
+            start_time = time()
+            statement_processor = StatementProcessor(self.TComboboxBankName.get(), self.radioButton_account_type.get(),
+                                                     self.TEntryUploadPath.get())
+            response = statement_processor.process()
+
             # restore stdout so we can really print and then set again
             sys.stdout = sys.__stdout__
-            append_to_text_ln(self.TTextOutput, self.print_out.getvalue())
-            self.print_out = sys.stdout
+            append_to_text_ln(self.TTextOutput, print_out.getvalue())
 
             if response != 0:
                 self.TLabelResult.configure(foreground="RED", text="FAILURE")
