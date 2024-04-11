@@ -5,6 +5,7 @@ import pytz as pytz
 from cassandra.cluster import Cluster, PlainTextAuthProvider, NoHostAvailable
 
 from .Utils import is_ui_execution
+from ..Constants import DB_TABLE_NAME
 from ..config import config
 from ..logger import log
 from ..model.StatementDB import StatementDB
@@ -13,7 +14,6 @@ from ..model.StatementDB import StatementDB
 class CassandraRepositoryHelper:
     __ins_user = "App"
     __IST_TIMEZONE = pytz.timezone('Asia/Kolkata')
-    __DB_TABLE_NAME = "bank_statement.statement"
 
     def __init__(self):
         contact_points = config['Cass']['contact.points']
@@ -53,7 +53,7 @@ class CassandraRepositoryHelper:
         stmt = self.session.prepare(
             "INSERT INTO {0} (bank_name,source,transaction_date,description,debit_amount,credit_amount,closing_balance,"
             "cheque_ref_number,value_date,ins_date,ins_user) VALUES (?,?,?,?,?,?,?,?,?,?,?)".format(
-                self.__DB_TABLE_NAME)
+                DB_TABLE_NAME)
         )
 
         query = stmt.bind([
@@ -78,7 +78,7 @@ class CassandraRepositoryHelper:
             "SELECT bank_name,source,transaction_date,description,debit_amount,credit_amount,closing_balance,ins_date "
             "FROM {0} "
             "WHERE bank_name = %s AND source = %s AND transaction_date >= %s ALLOW FILTERING;".format(
-                self.__DB_TABLE_NAME))
+                DB_TABLE_NAME))
 
         # Convert the datetime to ISO 8601 format (string)
         iso_start_date = transaction_date.date().isoformat()
@@ -107,7 +107,7 @@ class CassandraRepositoryHelper:
         query = (
             "SELECT transaction_date,bank_name,source,debit_amount,credit_amount,description,closing_balance,cheque_ref_number,ins_date "
             "FROM {0}".format(
-                self.__DB_TABLE_NAME))
+                DB_TABLE_NAME))
 
         # Execute and Convert the ResultSet to a list for sorting
         result = self.session.execute(query)
