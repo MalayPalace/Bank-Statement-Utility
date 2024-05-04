@@ -11,11 +11,14 @@ setup(
     version=__version__,
     # this approach automatically finds out all directories (packages) - those must contain a file named __init__.py
     packages=find_packages(),
+    # include non-python files
+    package_data={'bank_statement_utility': ['icon.png']},
     # include/exclude arguments take * as wildcard, for any sub-package names. installing requirements
     install_requires=requirements,
     entry_points={
         "console_scripts": [
             "bank_statement_utility=bank_statement_utility:main",
+            "bank_statement_utility_ui=bank_statement_utility:main_ui",
         ]
     },
 )

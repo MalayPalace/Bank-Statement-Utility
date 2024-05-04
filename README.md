@@ -115,7 +115,7 @@ python setup.py bdist_wheel
 ## Road Map:
 Planning to add more banks and even Credit Card statements.
 
-## Dependencies:
+## Credits:
 Utility is using below following dependencies.
 Thanks to library creator & contributors
 <p>
@@ -123,3 +123,6 @@ Thanks to library creator & contributors
 <a href="https://pypi.org/project/xlrd/">xlrd</a><br>
 <a href="https://pypi.org/project/pytz/">pytz</a><br>
 <a href="https://pypi.org/project/pypdf/">pypdf</a><br>
+<a href="https://pypi.org/project/ttkbootstrap/">ttkbootstrap</a><br>
+
+Icon is by <a href="https://www.iconfinder.com/search?q=webkul+software">Webkul Software</a>

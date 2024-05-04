@@ -3,3 +3,4 @@ setuptools==67.6.0
 xlrd==2.0.1
 pytz==2023.2
 pypdf~=3.17.4
+ttkbootstrap~=1.10.1

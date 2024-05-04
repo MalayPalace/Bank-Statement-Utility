@@ -7,10 +7,12 @@
 import os
 import sys
 import tkinter as tk
-import tkinter.ttk as ttk
 from io import StringIO
 from time import time
 from tkinter import filedialog
+
+import ttkbootstrap as ttk
+from ttkbootstrap import DARK
 
 from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE
 from bank_statement_utility.StatementProcessor import StatementProcessor
@@ -34,7 +36,6 @@ def _style_code():
     global _style_code_ran
     if _style_code_ran: return
     style = ttk.Style()
-    style.theme_use('default')
     style.configure('.', font="TkDefaultFont")
     if sys.platform == "win32":
         style.theme_use('winnative')
@@ -124,7 +125,7 @@ class MainScreenView:
         self.TLabel3.configure(compound=tk.LEFT)
 
         self.TComboboxBankName = ttk.Combobox(self.top)
-        self.TComboboxBankName.place(relx=0.157, rely=0.07, relheight=0.082
+        self.TComboboxBankName.place(relx=0.157, rely=0.07, relheight=0.122
                                      , relwidth=0.205)
         self.TComboboxBankName.configure(font="-family {DejaVu Sans} -size 10")
         self.TComboboxBankName.configure(state=_READONLY)
@@ -134,7 +135,7 @@ class MainScreenView:
         self.TComboboxBankName_tooltip = \
             ToolTip(self.TComboboxBankName, '''Select Bank''')
 
-        self.TButtonUpload = ttk.Button(self.top)
+        self.TButtonUpload = ttk.Button(self.top, bootstyle=DARK)
         self.TButtonUpload.place(relx=0.59, rely=0.261, height=25, width=103)
         self.TButtonUpload.configure(text='''Upload''')
         self.TButtonUpload.configure(compound=tk.LEFT)
@@ -178,7 +179,7 @@ class MainScreenView:
         self.TTextOutput.configure(cursor="xterm")
         self.TTextOutput.bind("<Key>", lambda e: "break")
 
-        self.TButtonLogs = ttk.Button(self.TFrame1)
+        self.TButtonLogs = ttk.Button(self.TFrame1, bootstyle=DARK)
         self.TButtonLogs.place(relx=0.875, rely=0.05, height=27, width=83)
         self.TButtonLogs.configure(text='''Logs''')
         self.TButtonLogs.configure(compound=tk.LEFT)

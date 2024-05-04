@@ -6,8 +6,10 @@
 #    Mar 25, 2024 05:08:39 PM IST  platform: Linux
 
 import tkinter as tk
-import ui.bankstatementutility as bankstatementutility
+from inspect import getsourcefile
+from os.path import dirname
 
+import bank_statement_utility.ui.bankstatementutility as bankstatementutility
 from bank_statement_utility.config import config
 from bank_statement_utility.logger import log
 from bank_statement_utility.version import __version__
@@ -22,6 +24,11 @@ def main(*args):
     global root
     root = tk.Tk()
     root.protocol('WM_DELETE_WINDOW', root.destroy)
+
+    # Setting icon of master window
+    execution_path = dirname(getsourcefile(lambda: 0))
+    p1 = tk.PhotoImage(file=execution_path + '/icon.png')
+    root.iconphoto(False, p1)
 
     log.info(config['Basic']['appname'] + " version: " + __version__)
 
