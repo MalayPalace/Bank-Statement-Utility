@@ -17,7 +17,10 @@ from ttkbootstrap import DARK
 from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE
 from bank_statement_utility.StatementProcessor import StatementProcessor
 from bank_statement_utility.logger import log, output_filename_path
-from bank_statement_utility.ui.ui_utils import show_alert, append_to_text_ln
+from bank_statement_utility.services.ExportService import ExportService
+from bank_statement_utility.ui import menu_support
+from bank_statement_utility.ui.tooltip import ToolTip
+from bank_statement_utility.ui.ui_utils import show_alert, append_to_text_ln, get_spaced_text
 
 _bgcolor = '#d9d9d9'
 _fgcolor = '#000000'
@@ -36,7 +39,7 @@ def _style_code():
     global _style_code_ran
     if _style_code_ran: return
     style = ttk.Style()
-    style.configure('.', font="TkDefaultFont")
+    style.configure('.', font="-family {DejaVu Sans} -size 10")
     if sys.platform == "win32":
         style.theme_use('winnative')
     _style_code_ran = 1
@@ -64,12 +67,7 @@ class MainScreenView:
         self.menubar = tk.Menu(top, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
         top.configure(menu=self.menubar)
 
-        self.menubar.add_command(compound=tk.LEFT
-                                 , font="-family {DejaVu Sans} -size 10", label='File')
-        self.menubar.add_command(compound=tk.LEFT
-                                 , font="-family {DejaVu Sans} -size 10", label='View')
-        self.menubar.add_command(compound=tk.LEFT
-                                 , font="-family {DejaVu Sans} -size 10", label='Help')
+        self.__configure_menu_bar(top)
 
         _style_code()
         self.TLabel1 = ttk.Label(self.top)
@@ -187,6 +185,26 @@ class MainScreenView:
 
         log.info("Completed loading the UI")
 
+    def __configure_menu_bar(self, top):
+        # Create Export Sub-Menu
+        sub_export = tk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
+        sub_export.add_command(command=self.export_as_csv, label=get_spaced_text("as CSV"))
+
+        # Create File Menu
+        file = tk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
+        file.add_cascade(menu=sub_export, label=get_spaced_text("Export"))
+        file.add_separator()
+        file.add_command(command=menu_support.quit_app, label=get_spaced_text("Quit"))
+
+        # Create Help Menu
+        help_menu = tk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
+        help_menu.add_command(command=lambda: menu_support.about(self.top), label=get_spaced_text("About"))
+
+        self.menubar.add_cascade(menu=file,
+                                 label="File")
+        self.menubar.add_cascade(menu=help_menu,
+                                 label="Help")
+
     def open_log_file(self):
         os.system(output_filename_path)
 
@@ -212,7 +230,7 @@ class MainScreenView:
     def process_file(self):
         try:
             # Clear previous Output
-            self.TTextOutput.delete("0.0", tk.END)
+            self.__clear_field()
 
             self.__validate_fields()
 
@@ -248,6 +266,39 @@ class MainScreenView:
                       exc_info=True)
             show_alert("Error", "Unknown Error. Check logs for more details.")
 
+    def export_as_csv(self):
+        try:
+            # Clear previous Output
+            self.__clear_field()
+
+            # Intercept and set stdout to our StringIO instance
+            print_out = StringIO()
+            sys.stdout = print_out
+
+            start_time = time()
+            ExportService().process()
+
+            # restore stdout so we can really print and then set again
+            sys.stdout = sys.__stdout__
+            append_to_text_ln(self.TTextOutput, print_out.getvalue())
+
+            # Print Time taken
+            append_to_text_ln(self.TTextOutput, "--- Time Taken: %s seconds ---" % (time() - start_time))
+            self.TLabelResult.configure(foreground="GREEN", text="SUCCESS")
+        except ValueError as value_ex:
+            show_alert("Validation Error", str(value_ex))
+        except IOError as io_ex:
+            self.TLabelResult.configure(foreground="RED", text="FAILURE")
+            append_to_text_ln(self.TTextOutput, str(io_ex))
+        except Exception as err:
+            log.error("Unknown error occur. Error:{error}".format(error=err.__str__()),
+                      exc_info=True)
+            show_alert("Error", "Unknown Error. Check logs for more details.")
+
+    def __clear_field(self):
+        self.TTextOutput.delete("0.0", tk.END)
+        self.TLabelResult.configure(text="")
+
     def __validate_fields(self):
         # Bank Name Validation
         if not BANK_NAMES.__contains__(self.combobox_bankname.get()):
@@ -266,110 +317,3 @@ class MainScreenView:
         if not is_file_exists:
             raise ValueError("File not Found or unable to Read it.")
         return True
-
-
-class ToolTip(tk.Toplevel):
-    """ Provides a ToolTip widget for Tkinter. """
-
-    def __init__(self, wdgt, msg=None, msgFunc=None, delay=0.5,
-                 follow=True):
-        self.wdgt = wdgt
-        self.parent = self.wdgt.master
-        tk.Toplevel.__init__(self, self.parent, bg='black', padx=1, pady=1)
-        self.withdraw()
-        self.overrideredirect(True)
-        self.msgVar = tk.StringVar()
-        if msg is None:
-            self.msgVar.set('No message provided')
-        else:
-            self.msgVar.set(msg)
-        self.msgFunc = msgFunc
-        self.delay = delay
-        self.follow = follow
-        self.visible = 0
-        self.lastMotion = 0
-        self.msg = tk.Message(self, textvariable=self.msgVar, bg=_bgcolor,
-                              fg=_fgcolor, font="TkDefaultFont",
-                              aspect=1000)
-        self.msg.grid()
-        self.wdgt.bind('<Enter>', self.spawn, '+')
-        self.wdgt.bind('<Leave>', self.hide, '+')
-        self.wdgt.bind('<Motion>', self.move, '+')
-
-    def spawn(self, event=None):
-        self.visible = 1
-        self.after(int(self.delay * 1000), self.show)
-
-    def show(self):
-        if self.visible == 1 and time() - self.lastMotion > self.delay:
-            self.visible = 2
-        if self.visible == 2:
-            self.deiconify()
-
-    def move(self, event):
-        self.lastMotion = time()
-        if self.follow is False:
-            self.withdraw()
-            self.visible = 1
-        self.geometry('+%i+%i' % (event.x_root + 20, event.y_root - 10))
-        try:
-            self.msgVar.set(self.msgFunc())
-        except:
-            pass
-        self.after(int(self.delay * 1000), self.show)
-
-    def hide(self, event=None):
-        self.visible = 0
-        self.withdraw()
-
-    def update(self, msg):
-        self.msgVar.set(msg)
-
-    def configure(self, **kwargs):
-        backgroundset = False
-        foregroundset = False
-        # Get the current tooltip text just in case the user doesn't provide any.
-        current_text = self.msgVar.get()
-        # to clear the tooltip text, use the .update method
-        if 'debug' in kwargs.keys():
-            debug = kwargs.pop('debug', False)
-            if debug:
-                for key, value in kwargs.items():
-                    print(f'key: {key} - value: {value}')
-        if 'background' in kwargs.keys():
-            background = kwargs.pop('background')
-            backgroundset = True
-        if 'bg' in kwargs.keys():
-            background = kwargs.pop('bg')
-            backgroundset = True
-        if 'foreground' in kwargs.keys():
-            foreground = kwargs.pop('foreground')
-            foregroundset = True
-        if 'fg' in kwargs.keys():
-            foreground = kwargs.pop('fg')
-            foregroundset = True
-
-        fontd = kwargs.pop('font', None)
-        if 'text' in kwargs.keys():
-            text = kwargs.pop('text')
-            if (text == '') or (text == "\n"):
-                text = current_text
-            else:
-                self.msgVar.set(text)
-        reliefd = kwargs.pop('relief', 'flat')
-        justifyd = kwargs.pop('justify', tk.LEFT)
-        padxd = kwargs.pop('padx', 1)
-        padyd = kwargs.pop('pady', 1)
-        borderwidthd = kwargs.pop('borderwidth', 2)
-        wid = self.msg  # The message widget which is the actual tooltip
-        if backgroundset:
-            wid.config(bg=background)
-        if foregroundset:
-            wid.config(fg=foreground)
-        wid.config(font=fontd)
-        wid.config(borderwidth=borderwidthd)
-        wid.config(relief=reliefd)
-        wid.config(justify=justifyd)
-        wid.config(padx=padxd)
-        wid.config(pady=padyd)
-#                   End of Class ToolTip

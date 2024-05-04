@@ -18,6 +18,6 @@ def is_ui_execution():
     value = execution_path_list[len(execution_path_list) - 1]
 
     # Considering both cases of whether UI started through installed module or through python main_ui
-    if "main_ui".__contains__(value) or "bank_statement_utility_ui".__contains__(value):
+    if value.__contains__("main_ui.py") or value.__contains__("bank_statement_utility_ui"):
         return True
     return False

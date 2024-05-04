@@ -10,3 +10,9 @@ def show_alert(alert_title: str, alert_message: str):
 def append_to_text_ln(text_field: Text, text_message: str):
     if text_field:
         text_field.insert(tkinter.END, text_message + os.linesep)
+
+
+def get_spaced_text(text: str):
+    offset = 4
+    space = ' ' * offset
+    return space + text + space
