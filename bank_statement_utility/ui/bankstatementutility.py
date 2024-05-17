@@ -7,17 +7,19 @@
 import os
 import sys
 import tkinter as tk
+from datetime import datetime, timedelta
 from io import StringIO
 from time import time
 from tkinter import filedialog
 
 import ttkbootstrap as ttk
-from ttkbootstrap import DARK
+from ttkbootstrap import DARK, LIGHT, SECONDARY
 
 from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE
 from bank_statement_utility.StatementProcessor import StatementProcessor
 from bank_statement_utility.logger import log, output_filename_path
 from bank_statement_utility.services.ExportService import ExportService
+from bank_statement_utility.services.VerificationService import VerificationService
 from bank_statement_utility.ui import menu_support
 from bank_statement_utility.ui.tooltip import ToolTip
 from bank_statement_utility.ui.ui_utils import show_alert, append_to_text_ln, get_spaced_text
@@ -52,7 +54,7 @@ class MainScreenView:
            top is the toplevel containing window.
         """
         log.info("Starting the UI..")
-        top.geometry("771x248+338+340")
+        top.geometry("887x254+285+374")
         top.minsize(700, 250)
         top.maxsize(3505, 1050)
         top.resizable(1, 1)
@@ -70,8 +72,22 @@ class MainScreenView:
         self.__configure_menu_bar(top)
 
         _style_code()
+
+        self.TabProcess = ttk.Button(self.top, bootstyle=LIGHT)
+        self.TabProcess.place(relx=0.0, rely=0.0, height=129, width=123)
+        self.TabProcess.configure(takefocus="")
+        self.TabProcess.configure(text='''Process''')
+        self.TabProcess.configure(compound='left')
+        self.TabProcess.configure(command=self.__process_button_pressed)
+
+        self.TabVerify = ttk.Button(self.top, bootstyle=SECONDARY)
+        self.TabVerify.place(relx=0.0, rely=0.5, height=129, width=123)
+        self.TabVerify.configure(text='''Verify''')
+        self.TabVerify.configure(compound='left')
+        self.TabVerify.configure(command=self.__verify_button_pressed)
+
         self.TLabel1 = ttk.Label(self.top)
-        self.TLabel1.place(relx=0.032, rely=0.07, height=21, width=84)
+        self.TLabel1.place(relx=0.151, rely=0.07, height=21, width=94)
         self.TLabel1.configure(font="-family {DejaVu Sans} -size 10")
         self.TLabel1.configure(relief=tk.FLAT)
         self.TLabel1.configure(anchor=tk.W)
@@ -80,7 +96,7 @@ class MainScreenView:
         self.TLabel1.configure(compound=tk.LEFT)
 
         self.TRadiobuttonAccountType_1 = ttk.Radiobutton(self.top)
-        self.TRadiobuttonAccountType_1.place(relx=0.547, rely=0.07
+        self.TRadiobuttonAccountType_1.place(relx=0.622, rely=0.07
                                              , relwidth=0.087, relheight=0.0, height=21)
         self.TRadiobuttonAccountType_1.configure(variable=self.radioButton_account_type)
         self.TRadiobuttonAccountType_1.configure(text=ACCOUNT_TYPE[0])
@@ -89,15 +105,15 @@ class MainScreenView:
         self.TRadiobuttonAccountType_1.configure(compound=tk.LEFT)
 
         self.TRadiobuttonAccountType_2 = ttk.Radiobutton(self.top)
-        self.TRadiobuttonAccountType_2.place(relx=0.646, rely=0.07, relwidth=0.1
-                                             , relheight=0.0, height=21)
+        self.TRadiobuttonAccountType_2.place(relx=0.718, rely=0.07
+                                             , relwidth=0.1, relheight=0.0, height=21)
         self.TRadiobuttonAccountType_2.configure(variable=self.radioButton_account_type)
         self.TRadiobuttonAccountType_2.configure(text=ACCOUNT_TYPE[1])
         self.TRadiobuttonAccountType_2.configure(value=ACCOUNT_TYPE[1])
         self.TRadiobuttonAccountType_2.configure(compound=tk.LEFT)
 
         self.TRadiobuttonAccountType_3 = ttk.Radiobutton(self.top)
-        self.TRadiobuttonAccountType_3.place(relx=0.756, rely=0.07
+        self.TRadiobuttonAccountType_3.place(relx=0.821, rely=0.07
                                              , relwidth=0.139, relheight=0.0, height=21)
         self.TRadiobuttonAccountType_3.configure(variable=self.radioButton_account_type)
         self.TRadiobuttonAccountType_3.configure(text=ACCOUNT_TYPE[2])
@@ -105,7 +121,7 @@ class MainScreenView:
         self.TRadiobuttonAccountType_3.configure(compound=tk.LEFT)
 
         self.TLabel2 = ttk.Label(self.top)
-        self.TLabel2.place(relx=0.415, rely=0.07, height=21, width=102)
+        self.TLabel2.place(relx=0.496, rely=0.07, height=21, width=102)
         self.TLabel2.configure(font="-family {DejaVu Sans} -size 10")
         self.TLabel2.configure(relief=tk.FLAT)
         self.TLabel2.configure(anchor=tk.W)
@@ -114,7 +130,7 @@ class MainScreenView:
         self.TLabel2.configure(compound=tk.LEFT)
 
         self.TLabel3 = ttk.Label(self.top)
-        self.TLabel3.place(relx=0.032, rely=0.274, height=20, width=81)
+        self.TLabel3.place(relx=0.152, rely=0.289, height=21, width=94)
         self.TLabel3.configure(font="-family {DejaVu Sans} -size 10")
         self.TLabel3.configure(relief=tk.FLAT)
         self.TLabel3.configure(anchor=tk.W)
@@ -123,7 +139,7 @@ class MainScreenView:
         self.TLabel3.configure(compound=tk.LEFT)
 
         self.TComboboxBankName = ttk.Combobox(self.top)
-        self.TComboboxBankName.place(relx=0.157, rely=0.07, relheight=0.122
+        self.TComboboxBankName.place(relx=0.259, rely=0.05, relheight=0.122
                                      , relwidth=0.205)
         self.TComboboxBankName.configure(font="-family {DejaVu Sans} -size 10")
         self.TComboboxBankName.configure(state=_READONLY)
@@ -134,30 +150,30 @@ class MainScreenView:
             ToolTip(self.TComboboxBankName, '''Select Bank''')
 
         self.TButtonUpload = ttk.Button(self.top, bootstyle=DARK)
-        self.TButtonUpload.place(relx=0.59, rely=0.261, height=25, width=103)
+        self.TButtonUpload.place(relx=0.647, rely=0.272, height=26, width=103)
         self.TButtonUpload.configure(text='''Upload''')
         self.TButtonUpload.configure(compound=tk.LEFT)
         self.TButtonUpload.configure(command=self.upload_file)
 
         self.TEntryUploadPath = ttk.Entry(self.top)
-        self.TEntryUploadPath.place(relx=0.157, rely=0.261, relheight=0.097
-                                    , relwidth=0.433)
+        self.TEntryUploadPath.place(relx=0.26, rely=0.276, relheight=0.097
+                                    , relwidth=0.388)
         self.TEntryUploadPath.configure(font="-family {DejaVu Sans} -size 10")
         self.TEntryUploadPath.configure(state=_READONLY)
         self.TEntryUploadPath.configure(cursor="xterm")
         self.TEntryUploadPath_tooltip = \
             ToolTip(self.TEntryUploadPath, '''File Path''')
 
-        self.TButtonProcess = ttk.Button(self.top)
-        self.TButtonProcess.place(relx=0.765, rely=0.195, height=68, width=173)
-        self.TButtonProcess.configure(text='''Process''')
-        self.TButtonProcess.configure(compound=tk.LEFT)
-        self.TButtonProcess.focus()
-        self.TButtonProcess.configure(command=self.process_file)
+        self.TButtonAction = ttk.Button(self.top)
+        self.TButtonAction.place(relx=0.79, rely=0.197, height=68, width=173)
+        self.TButtonAction.configure(text='''Process''')
+        self.TButtonAction.configure(compound=tk.LEFT)
+        self.TButtonAction.focus()
+        self.TButtonAction.configure(command=self.do_action)
 
         self.TFrame1 = ttk.Frame(self.top)
-        self.TFrame1.place(relx=0.013, rely=0.486, relheight=0.463
-                           , relwidth=0.979)
+        self.TFrame1.place(relx=0.147, rely=0.512, relheight=0.465
+                           , relwidth=0.843)
         self.TFrame1.configure(relief=tk.GROOVE)
         self.TFrame1.configure(borderwidth="2")
 
@@ -170,15 +186,15 @@ class MainScreenView:
         self.TLabelResult.configure(compound=tk.LEFT)
 
         self.TTextOutput = tk.Text(self.TFrame1, height=50, width=50)
-        self.TTextOutput.place(relx=0.015, rely=0.319, relheight=0.597
+        self.TTextOutput.place(relx=0.015, rely=0.339, relheight=0.610
                                , relwidth=0.972)
-        self.TTextOutput.configure(font="-family {DejaVu Sans} -size 10")
-        # self.TEntryOutput.configure(state='readonly')
+        self.TTextOutput.configure(font="-family {DejaVu Sans} -size 9")
         self.TTextOutput.configure(cursor="xterm")
         self.TTextOutput.bind("<Key>", lambda e: "break")
 
         self.TButtonLogs = ttk.Button(self.TFrame1, bootstyle=DARK)
-        self.TButtonLogs.place(relx=0.875, rely=0.05, height=27, width=83)
+        ## TODO: Create a window with search capabilities and load logs into it. So not placing the component yet.
+        # self.TButtonLogs.place(relx=0.875, rely=0.05, height=27, width=83)
         self.TButtonLogs.configure(text='''Logs''')
         self.TButtonLogs.configure(compound=tk.LEFT)
         self.TButtonLogs.configure(command=self.open_log_file)
@@ -205,6 +221,23 @@ class MainScreenView:
         self.menubar.add_cascade(menu=help_menu,
                                  label="Help")
 
+    def __process_button_pressed(self):
+        self.TabProcess.configure(bootstyle=LIGHT)
+        self.TabVerify.configure(bootstyle=SECONDARY)
+        self.TButtonAction.configure(text='''Process''')
+        self.TButtonUpload.place(relx=0.647, rely=0.272, height=26, width=103)
+        self.TEntryUploadPath.place(relx=0.26, rely=0.276, relheight=0.097
+                                    , relwidth=0.388)
+        self.TLabel3.place(relx=0.152, rely=0.289, height=21, width=94)
+
+    def __verify_button_pressed(self):
+        self.TabProcess.configure(bootstyle=SECONDARY)
+        self.TabVerify.configure(bootstyle=LIGHT)
+        self.TButtonAction.configure(text='''Verify''')
+        self.TButtonUpload.place_forget()
+        self.TEntryUploadPath.place_forget()
+        self.TLabel3.place_forget()
+
     def open_log_file(self):
         os.system(output_filename_path)
 
@@ -227,11 +260,14 @@ class MainScreenView:
         self.TEntryUploadPath_tooltip = \
             ToolTip(self.TEntryUploadPath, file_path)
 
-    def process_file(self):
+    def do_action(self):
+        button_text = self.TButtonAction.cget('text')
+        success_flag = False
+        response_text = ''
+
         try:
             # Clear previous Output
             self.__clear_field()
-
             self.__validate_fields()
 
             # Intercept and set stdout to our StringIO instance
@@ -239,20 +275,43 @@ class MainScreenView:
             sys.stdout = print_out
 
             start_time = time()
-            statement_processor = StatementProcessor(self.TComboboxBankName.get(), self.radioButton_account_type.get(),
-                                                     self.TEntryUploadPath.get())
-            response = statement_processor.process()
+
+            if "Process" == button_text:
+                statement_processor = StatementProcessor(self.TComboboxBankName.get(),
+                                                         self.radioButton_account_type.get(),
+                                                         self.TEntryUploadPath.get())
+                response = statement_processor.process()
+                if response != 0:
+                    response_text = "App ended with errors. Check logs for details."
+                else:
+                    response_text = "App ended successfully."
+                    success_flag = True
+
+            elif "Verify" == button_text:
+                years = 3
+                no_of_days_in_year = 365
+                oldest_date = datetime.now() - timedelta(days=years * no_of_days_in_year)
+
+                print(f"Using Start Date:{oldest_date.date()}")
+                verify_service = VerificationService(self.TComboboxBankName.get(), self.radioButton_account_type.get(),
+                                                     oldest_date)
+                result = verify_service.process()
+                if result:
+                    response_text = "Validation Successful."
+                    success_flag = True
+                else:
+                    response_text = "Validation Failed!"
 
             # restore stdout so we can really print and then set again
             sys.stdout = sys.__stdout__
             append_to_text_ln(self.TTextOutput, print_out.getvalue())
 
-            if response != 0:
-                self.TLabelResult.configure(foreground="RED", text="FAILURE")
-                append_to_text_ln(self.TTextOutput, "App ended with errors. Check logs for details")
-            else:
+            if success_flag:
                 self.TLabelResult.configure(foreground="GREEN", text="SUCCESS")
-                append_to_text_ln(self.TTextOutput, "App ended successfully.")
+                append_to_text_ln(self.TTextOutput, response_text)
+            else:
+                self.TLabelResult.configure(foreground="RED", text="FAILURE")
+                append_to_text_ln(self.TTextOutput, response_text)
 
             # Print Time taken
             append_to_text_ln(self.TTextOutput, "--- Time Taken: %s seconds ---" % (time() - start_time))
@@ -309,11 +368,14 @@ class MainScreenView:
             raise ValueError("Account Type Not Selected")
 
         # File Validation
-        if not self.TEntryUploadPath.get():
-            raise ValueError("File Not Selected")
+        button_text = self.TButtonAction.cget('text')
+        if button_text == "Process":
+            if not self.TEntryUploadPath.get():
+                raise ValueError("File Not Selected")
 
-        # Check File exists or not
-        is_file_exists = os.path.exists(self.TEntryUploadPath.get())
-        if not is_file_exists:
-            raise ValueError("File not Found or unable to Read it.")
+            # Check File exists or not
+            is_file_exists = os.path.exists(self.TEntryUploadPath.get())
+            if not is_file_exists:
+                raise ValueError("File not Found or unable to Read it.")
+
         return True
