@@ -13,6 +13,7 @@ from time import time
 from tkinter import filedialog
 
 import ttkbootstrap as ttk
+from tkinterdnd2 import DND_FILES
 from ttkbootstrap import DARK, LIGHT, SECONDARY
 
 from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE
@@ -68,6 +69,10 @@ class MainScreenView:
 
         self.menubar = tk.Menu(top, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
         top.configure(menu=self.menubar)
+
+        # Allow drag and drop of file on whole window
+        top.drop_target_register(DND_FILES)
+        top.dnd_bind('<<Drop>>', self.on_drop)
 
         self.__configure_menu_bar(top)
 
@@ -178,7 +183,7 @@ class MainScreenView:
         self.TFrame1.configure(borderwidth="2")
 
         self.TLabelResult = ttk.Label(self.TFrame1)
-        self.TLabelResult.place(relx=0.015, rely=0.092, height=20, width=157)
+        self.TLabelResult.place(relx=0.015, rely=0.06, height=20, width=157)
         self.TLabelResult.configure(font="-family {DejaVu Sans} -size 11")
         self.TLabelResult.configure(relief=tk.FLAT)
         self.TLabelResult.configure(anchor=tk.W)
@@ -186,7 +191,7 @@ class MainScreenView:
         self.TLabelResult.configure(compound=tk.LEFT)
 
         self.TTextOutput = tk.Text(self.TFrame1, height=50, width=50)
-        self.TTextOutput.place(relx=0.015, rely=0.339, relheight=0.610
+        self.TTextOutput.place(relx=0.015, rely=0.25, relheight=0.70
                                , relwidth=0.972)
         self.TTextOutput.configure(font="-family {DejaVu Sans} -size 9")
         self.TTextOutput.configure(cursor="xterm")
@@ -194,7 +199,7 @@ class MainScreenView:
 
         self.TButtonLogs = ttk.Button(self.TFrame1, bootstyle=DARK)
         ## TODO: Create a window with search capabilities and load logs into it. So not placing the component yet.
-        # self.TButtonLogs.place(relx=0.875, rely=0.05, height=27, width=83)
+        # self.TButtonLogs.place(relx=0.875, rely=0.03, height=27, width=83)
         self.TButtonLogs.configure(text='''Logs''')
         self.TButtonLogs.configure(compound=tk.LEFT)
         self.TButtonLogs.configure(command=self.open_log_file)
@@ -220,6 +225,26 @@ class MainScreenView:
                                  label="File")
         self.menubar.add_cascade(menu=help_menu,
                                  label="Help")
+
+    def on_drop(self, event):
+        upload_label_place_info = self.TEntryUploadPath.place_info()
+
+        if upload_label_place_info:
+            # Get the file paths from the event data
+            file_path = self.top.tk.splitlist(event.data)
+
+            self.TEntryUploadPath.configure(state=tk.NORMAL)
+            # Delete the existing text in the Entry widget
+            self.TEntryUploadPath.delete(0, tk.END)
+            # Display the selected file path in a label
+            self.TEntryUploadPath.insert(tk.END, file_path)
+            self.TEntryUploadPath.configure(state=_READONLY)
+
+            # Update Tooltip
+            self.TEntryUploadPath_tooltip = \
+                ToolTip(self.TEntryUploadPath, file_path)
+        else:
+            show_alert("Warning", "File cannot be dropped on this View")
 
     def __process_button_pressed(self):
         self.TabProcess.configure(bootstyle=LIGHT)

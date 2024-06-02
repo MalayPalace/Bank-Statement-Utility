@@ -9,6 +9,8 @@ import tkinter as tk
 from inspect import getsourcefile
 from os.path import dirname
 
+from tkinterdnd2 import TkinterDnD
+
 import bank_statement_utility.ui.bankstatementutility as bankstatementutility
 from bank_statement_utility.config import config
 from bank_statement_utility.logger import log
@@ -22,7 +24,7 @@ def main(*args):
     Main entry point for the application.
     """
     global root
-    root = tk.Tk()
+    root = TkinterDnD.Tk()
     root.protocol('WM_DELETE_WINDOW', root.destroy)
 
     # Setting icon of master window
