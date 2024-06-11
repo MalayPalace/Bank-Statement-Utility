@@ -18,7 +18,7 @@ from ttkbootstrap import DARK, LIGHT, SECONDARY
 
 from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE
 from bank_statement_utility.StatementProcessor import StatementProcessor
-from bank_statement_utility.logger import log, output_filename_path
+from bank_statement_utility.logger import log
 from bank_statement_utility.services.ExportService import ExportService
 from bank_statement_utility.services.VerificationService import VerificationService
 from bank_statement_utility.ui import menu_support
@@ -198,11 +198,10 @@ class MainScreenView:
         self.TTextOutput.bind("<Key>", lambda e: "break")
 
         self.TButtonLogs = ttk.Button(self.TFrame1, bootstyle=DARK)
-        ## TODO: Create a window with search capabilities and load logs into it. So not placing the component yet.
-        # self.TButtonLogs.place(relx=0.875, rely=0.03, height=27, width=83)
-        self.TButtonLogs.configure(text='''Logs''')
+        self.TButtonLogs.place(relx=0.875, rely=0.03, height=27, width=83)
+        self.TButtonLogs.configure(text='''Clear''')
         self.TButtonLogs.configure(compound=tk.LEFT)
-        self.TButtonLogs.configure(command=self.open_log_file)
+        self.TButtonLogs.configure(command=self.__clear_field)
 
         log.info("Completed loading the UI")
 
@@ -262,9 +261,6 @@ class MainScreenView:
         self.TButtonUpload.place_forget()
         self.TEntryUploadPath.place_forget()
         self.TLabel3.place_forget()
-
-    def open_log_file(self):
-        os.system(output_filename_path)
 
     def upload_file(self):
         file_type_map = (
