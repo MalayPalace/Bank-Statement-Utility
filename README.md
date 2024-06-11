@@ -27,6 +27,26 @@ Have created various configurable parser which can read and store bank statement
 failure and can log the data which failed storing to database. Re-executable as in same file can be reprocessed without any
 duplication issue.
 
+Has below 2 main functionality:
+1. <b>Process:</b> To process the statement file and store to the database.
+2. <b>Verify:</b> Validate the transactions by comparing the closing balance between transactions. If it fails it might be some transaction might be missing. Script output will print the amount difference found.
+
+## Screens
+<p align="center">
+   <img src="./resources/screenshot/home_screen.png"
+            alt="Home Screen" />
+   <i>App: Home Screen</i>
+   <br><br>
+   <img src="./resources/screenshot/process_record_output.png"
+            alt="Process Record" />
+   <i>App: Record Insertion with Successful message</i>
+   <br><br>
+   <img src="./resources/screenshot/verify_output.png"
+            alt="Verify Record" />
+   <i>App: Successfully Validated message</i>
+</p>
+
+
 ## Banks which are currently supported:
 
 Below are the format information that the utility support for various banks. Download statement as prescribed format below:
@@ -69,22 +89,19 @@ docker-compose up -d
 ```bash
 pip install bank_statement_utility-<latest-version>-py3-none-any.whl
 ```
-5. Utility will create Config File when it executes first time at `${HOME}/.local/share/bank-statement-app/config.ini` for Utility to read it. 
+5. Utility will create Config File when it executes first time at `${HOME}/.local/share/bank-statement-app/config.ini`(For Linux & others)
+   or at `${HOME}/AppData/local/bank-statement-app/config.ini`(For Windows) for Utility to read it. 
    <br><i>Manually Edit config.ini file to add Cassandra Username/password</i>
 
 ## Basic Usage:
+
+### <u>UI Usage</u> 
+Execute the `main_ui.py` from project folder or if you have installed wheel and pip install path is in your Environmental Variable then execute directly `bank_statement_utility_ui`
+
+### <u>CLI Usage</u> 
 Execute the `main.py` from project folder or if you have installed wheel and pip install path is in your Environmental Variable then execute directly `bank_statement_utility`
 
-```bash
-bank_statement_utility {save,verify,export} -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} filename
-```
-OR
-```bash
-python bank_statement_utility/main.py {save,verify,export} -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} filename
-```
-
-### Commands Supported:
-1. <b><u>save</u></b>: To process the statement file and store to the database.
+1. <b><u>save/process</u></b>: To process the statement file and store to the database.
    <br/><u>Usage</u>:
    ```
    python bank_statement_utility/main.py save -n {HDFC,KOTAK,SBI,BOB,IDBI} -t {Saving,Current,Creditcard} filename
@@ -124,5 +141,6 @@ Thanks to library creator & contributors
 <a href="https://pypi.org/project/pytz/">pytz</a><br>
 <a href="https://pypi.org/project/pypdf/">pypdf</a><br>
 <a href="https://pypi.org/project/ttkbootstrap/">ttkbootstrap</a><br>
+<a href="https://pypi.org/project/tkinterdnd2/">tkinterdnd2</a><br>
 
 Icon is by <a href="https://www.iconfinder.com/search?q=webkul+software">Webkul Software</a>
