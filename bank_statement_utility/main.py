@@ -4,7 +4,7 @@ import sys
 import time
 from datetime import datetime, timedelta
 
-from bank_statement_utility.Constants import bank_names, account_type
+from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE
 from bank_statement_utility.StatementProcessor import StatementProcessor
 from bank_statement_utility.config import config
 from bank_statement_utility.logger import log
@@ -26,19 +26,19 @@ def process():
 
     # Save Command Parser
     save_sub_parser = sub_parsers.add_parser("save", help="Store Bank Statement")
-    save_sub_parser.add_argument("-n", "--name", help="Name of the bank", type=str.upper, choices=bank_names,
+    save_sub_parser.add_argument("-n", "--name", help="Name of the bank", type=str.upper, choices=BANK_NAMES,
                                  required=True)
     save_sub_parser.add_argument("-t", "--type", help="Type of account. Saving|Current|Creditcard", type=str.capitalize,
-                                 choices=account_type, required=True)
+                                 choices=ACCOUNT_TYPE, required=True)
     save_sub_parser.add_argument("filename", help="Bank Statement file to read")
 
     # Verify Command Parser
     verify_sub_parser = sub_parsers.add_parser("verify", help="Validation Command")
-    verify_sub_parser.add_argument("-n", "--name", help="Name of the bank", type=str.upper, choices=bank_names,
+    verify_sub_parser.add_argument("-n", "--name", help="Name of the bank", type=str.upper, choices=BANK_NAMES,
                                    required=True)
     verify_sub_parser.add_argument("-t", "--type", help="Type of account. Saving|Current|Creditcard",
                                    type=str.capitalize,
-                                   choices=account_type, required=True)
+                                   choices=ACCOUNT_TYPE, required=True)
     verify_sub_parser.add_argument("--start-date",
                                    help="Start Date for verification command. Should follow DD-MM-YYYY format",
                                    type=str, required=False)

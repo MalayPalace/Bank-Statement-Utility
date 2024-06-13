@@ -10,6 +10,8 @@ from .services.SbiDebitStatementProcessor import SbiDebitStatementProcessor
 from .services.SvcSavingStatementProcessor import SvcSavingStatementProcessor
 from .services.KotakCcStatementProcessor import KotakCcStatementProcessor
 from .services.SbiCcStatementProcessor import SbiCcStatementProcessor
+from .services.Utils import is_ui_execution
+
 
 class StatementProcessor(object):
 
@@ -65,7 +67,11 @@ class StatementProcessor(object):
             log.error("No Processor defined for bank {bank_name} and source type {source}".format(bank_name=self.bank_name,
                                                                                                   source=self.source))
             self.__close()
-            sys.exit("No processor found for given bank-name and source. Check logs for more details. Exiting...")
+
+            if is_ui_execution():
+                raise IOError("No processor found for given bank-name and source. Check logs for more details.")
+            else:
+                sys.exit("No processor found for given bank-name and source. Check logs for more details. Exiting...")
 
         self.__close()
         return response
