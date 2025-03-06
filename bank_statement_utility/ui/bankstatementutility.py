@@ -16,7 +16,7 @@ import ttkbootstrap as ttk
 from tkinterdnd2 import DND_FILES
 from ttkbootstrap import DARK, LIGHT, SECONDARY
 
-from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE
+from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE, ExportType
 from bank_statement_utility.StatementProcessor import StatementProcessor
 from bank_statement_utility.logger import log
 from bank_statement_utility.services.ExportService import ExportService
@@ -190,7 +190,7 @@ class MainScreenView:
         self.TLabelResult.configure(justify=tk.LEFT)
         self.TLabelResult.configure(compound=tk.LEFT)
 
-        self.TTextOutput = tk.Text(self.TFrame1, height=50, width=50)
+        self.TTextOutput = ttk.Text(self.TFrame1, height=50, width=50)
         self.TTextOutput.place(relx=0.015, rely=0.25, relheight=0.70
                                , relwidth=0.972)
         self.TTextOutput.configure(font="-family {DejaVu Sans} -size 9")
@@ -208,7 +208,8 @@ class MainScreenView:
     def __configure_menu_bar(self, top):
         # Create Export Sub-Menu
         sub_export = tk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
-        sub_export.add_command(command=self.export_as_csv, label=get_spaced_text("as CSV"))
+        sub_export.add_command(command=lambda: self.export(ExportType.CSV), label=get_spaced_text("as CSV"))
+        sub_export.add_command(command=lambda: self.export(ExportType.QIF), label=get_spaced_text("as QIF"))
 
         # Create File Menu
         file = tk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
@@ -346,7 +347,7 @@ class MainScreenView:
                       exc_info=True)
             show_alert("Error", "Unknown Error. Check logs for more details.")
 
-    def export_as_csv(self):
+    def export(self, export_type: ExportType):
         try:
             # Clear previous Output
             self.__clear_field()
@@ -356,7 +357,12 @@ class MainScreenView:
             sys.stdout = print_out
 
             start_time = time()
-            ExportService().process()
+            if export_type == ExportType.CSV:
+                ExportService().as_csv()
+            elif export_type == ExportType.QIF:
+                ExportService().as_qif()
+            else:
+                raise ValueError("Invalid Export Type")
 
             # restore stdout so we can really print and then set again
             sys.stdout = sys.__stdout__

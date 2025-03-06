@@ -1,8 +1,11 @@
 import os
 import platform
 
+from enum import Enum
+
 BANK_NAMES = ['HDFC', 'KOTAK', 'SBI', 'BOB', 'IDBI', 'SVC']
 ACCOUNT_TYPE = ['Saving', 'Current', 'Creditcard']
+EXPORT_TYPE = ['CSV', 'QIF']
 
 COMMA = ","
 SPACE = " "
@@ -21,3 +24,7 @@ DB_TABLE_NAME = "bank_statement.statement"
 # APP_CONFIG_PATH = "./config/"
 # DB_TABLE_NAME = "bank_statement.statement_test"
 ####################################
+
+class ExportType(Enum):
+    CSV = "csv"
+    QIF = "qif"

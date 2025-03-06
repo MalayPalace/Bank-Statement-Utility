@@ -4,7 +4,7 @@ import sys
 import time
 from datetime import datetime, timedelta
 
-from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE
+from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE, EXPORT_TYPE
 from bank_statement_utility.StatementProcessor import StatementProcessor
 from bank_statement_utility.config import config
 from bank_statement_utility.logger import log
@@ -44,7 +44,9 @@ def process():
                                    type=str, required=False)
 
     # Export Command Parser
-    sub_parsers.add_parser("export", help="Export Transaction sorted by latest Transaction Date")
+    export_sub_parser = sub_parsers.add_parser("export", help="Export Transaction sorted by latest Transaction Date")
+    export_sub_parser.add_argument("-t", "--type", help="Exported File type", type=str.upper,
+                                   choices=EXPORT_TYPE, required=False)
 
     # Read arguments from command line
     args = parser.parse_args()
@@ -98,7 +100,10 @@ def process():
         else:
             print("App ended successfully")
     elif cmd == "export":
-        ExportService().process()
+        if args.type == "QIF":
+            ExportService().as_qif()
+        else:
+            ExportService().as_csv()
 
     # Print Time taken
     print("--- Time Taken: %s seconds ---" % (time.time() - start_time))

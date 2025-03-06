@@ -2,7 +2,7 @@
 from configparser import ConfigParser
 
 from .Constants import APP_CONFIG_PATH
-from .version import __version_1_2_1__, __version_2_0_0__
+from .version import __version_1_2_1__, __version_2_0_0__, __version_2_0_1__
 
 config = ConfigParser()
 
@@ -52,6 +52,8 @@ def check_and_update_config_to_latest(config_file):
     """
     if version_compare(config_file['Basic']['version'], __version_2_0_0__) == -1:
         __update_to_2_0_0()
+    if version_compare(config_file['Basic']['version'], __version_2_0_1__) == -1:
+        __update_to_2_0_1()
 
 
 def write_default_config():
@@ -108,6 +110,15 @@ def write_default_config():
 def __update_to_2_0_0():
     config.read(APP_CONFIG_PATH + 'config.ini')
     config.set('Basic', 'version', __version_2_0_0__)
+
+    with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
+        config.write(f)
+
+
+def __update_to_2_0_1():
+    config.read(APP_CONFIG_PATH + 'config.ini')
+    config.set('Basic', 'version', __version_2_0_1__)
+    config.set('KOTAK', 'record_ends_with', 'Closing balance')
 
     with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
         config.write(f)

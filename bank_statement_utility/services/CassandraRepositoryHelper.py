@@ -114,7 +114,7 @@ class CassandraRepositoryHelper:
 
         if result:
             def sorting_key(row):
-                return row.transaction_date, row.ins_date
+                return row.transaction_date
 
             # Sort the result list using the custom sorting key
             sorted_result = sorted(list(result), key=sorting_key, reverse=True)
@@ -127,6 +127,26 @@ class CassandraRepositoryHelper:
                              obj in sorted_result]
             return statement_obj
 
+        return result
+
+    def get_all_ordered_by_bank_latest(self) -> list[StatementDB]:
+        query = (
+            "SELECT transaction_date,bank_name,source,debit_amount,credit_amount,description,closing_balance,"
+            "cheque_ref_number,ins_date "
+            "FROM {0}".format(DB_TABLE_NAME))
+        result = self.session.execute(query)
+
+        if result:
+            sorted_result = sorted(list(result), key=lambda row: (row.bank_name, row.source, row.transaction_date),
+                                   reverse=True)
+
+            # Convert to StatementDb Object
+            statement_obj = [StatementDB.to_instance(obj.bank_name, obj.source, obj.transaction_date, obj.description,
+                                                     obj.debit_amount, obj.credit_amount, obj.cheque_ref_number,
+                                                     obj.closing_balance,
+                                                     None, obj.ins_date) for
+                             obj in sorted_result]
+            return statement_obj
         return result
 
     def close_db(self):

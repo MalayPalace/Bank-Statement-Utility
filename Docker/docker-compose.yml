@@ -4,7 +4,22 @@ services:
     container_name: cassandra
     networks:
       - cluster
+#    # Uncomment the following section to use a existing volume for Cassandra data if any
+#    volumes:
+#      - <my-existing-volume>:/var/lib/cassandra
     ports:
       - "9042:9042"
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "1536M"
+        reservations:
+          cpus: "1"
+          memory: "512M"
 networks:
   cluster:
+## Uncomment the following section to use a existing volume for Cassandra data if any
+#volumes:
+#  <my-existing-volume>:
+#    external: true
