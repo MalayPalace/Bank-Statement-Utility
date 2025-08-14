@@ -3,7 +3,7 @@ import platform
 
 from enum import Enum
 
-BANK_NAMES = ['HDFC', 'KOTAK', 'SBI', 'BOB', 'IDBI', 'SVC']
+BANK_NAMES = ['HDFC', 'KOTAK', 'SBI', 'BOB', 'IDBI', 'SVC', 'YES']
 ACCOUNT_TYPE = ['Saving', 'Current', 'Creditcard']
 EXPORT_TYPE = ['CSV', 'QIF']
 
@@ -28,3 +28,6 @@ DB_TABLE_NAME = "bank_statement.statement"
 class ExportType(Enum):
     CSV = "csv"
     QIF = "qif"
+
+# Other constants can be added here as needed
+EMPTY_STRING = ""

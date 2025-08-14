@@ -11,6 +11,7 @@ from .services.SvcSavingStatementProcessor import SvcSavingStatementProcessor
 from .services.KotakCcStatementProcessor import KotakCcStatementProcessor
 from .services.SbiCcStatementProcessor import SbiCcStatementProcessor
 from .services.Utils import is_ui_execution
+from .services.YesCcStatementProcessor import YesCcStatementProcessor
 
 
 class StatementProcessor(object):
@@ -107,6 +108,10 @@ class StatementProcessor(object):
         elif self.bank_name == "SVC":
             if self.source == "Saving" or self.source == "Current":
                 processor = SvcSavingStatementProcessor(self.filepath, self.source)
+
+        elif self.bank_name == "YES":
+            if self.source == "Creditcard":
+                processor = YesCcStatementProcessor(self.filepath, self.source)
 
         return processor
 

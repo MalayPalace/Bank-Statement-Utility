@@ -41,7 +41,12 @@ class KotakDebitStatementProcessor(BankStatementInterface):
         closing_balance = round(float(remove_comma(value_dict['Balance'])), 2)
 
         # Date formatting
-        trans_date = datetime.strptime(value_dict['Transaction Date'], '%d-%m-%Y')
+        try:
+            trans_date = datetime.strptime(value_dict['Transaction Date'], '%d-%m-%Y')
+        except ValueError:
+            # Fallback for different date format
+            trans_date = datetime.strptime(value_dict['Transaction Date'], '%d-%m-%Y %H:%M:%S')
+
         value_date = datetime.strptime(value_dict['Value Date'], '%d-%m-%Y')
 
         record = StatementDB(

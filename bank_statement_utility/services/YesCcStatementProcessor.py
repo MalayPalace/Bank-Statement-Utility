@@ -2,16 +2,16 @@ from datetime import datetime
 
 from .BankStatementInterface import BankStatementInterface
 from .Utils import remove_comma, append_str
-from ..Constants import CREDIT_CARD_SUFFIX, EMPTY_STRING
+from ..Constants import CREDIT_CARD_SUFFIX
 from ..config import config
 from ..model.StatementDB import StatementDB
 from ..parser.PdfParserWithCustomHeader import PdfParserWithCustomHeader
 
 
-class KotakCcStatementProcessor(BankStatementInterface):
+class YesCcStatementProcessor(BankStatementInterface):
 
     def __init__(self, filepath, source):
-        self.name = "KOTAK"
+        self.name = "YES"
         self.source = source
         self.filepath = filepath
         config_name = append_str(self.name, CREDIT_CARD_SUFFIX)
@@ -23,7 +23,7 @@ class KotakCcStatementProcessor(BankStatementInterface):
             data_header_list = data_headers.split(",")
 
         self.parser = PdfParserWithCustomHeader(filepath, config[config_name][
-            'record_selector_regex'], EMPTY_STRING, data_header_list)
+            'record_selector_regex'], config[config_name]['record_end_regex'], data_header_list)
 
     def get_record(self):
         value_dict = self.parser.get_next_data()
@@ -38,15 +38,21 @@ class KotakCcStatementProcessor(BankStatementInterface):
         # Determine amount
         amount = value_dict['Amount']
 
+        debit_amount = None
+        credit_amount = None
+        closing_balance = None
         if amount and amount.endswith(' Cr'):
             debit_amount = None
             sliced_amount = amount[0:len(amount) - 3]
             credit_amount = round(float(remove_comma(sliced_amount)), 2)
             closing_balance = credit_amount
-        else:
-            debit_amount = round(float(remove_comma(amount)), 2)
+        elif amount and amount.endswith(' Dr'):
             credit_amount = None
+            sliced_amount = amount[0:len(amount) - 3]
+            debit_amount = round(float(remove_comma(sliced_amount)), 2)
             closing_balance = -debit_amount
+        else:
+            raise ValueError(f"Invalid Amount format: {amount}")
 
         # Date formatting
         trans_date = datetime.strptime(value_dict['Date'], '%d/%m/%Y')
@@ -58,7 +64,7 @@ class KotakCcStatementProcessor(BankStatementInterface):
             value_dict['Transaction Details'],
             debit_amount,
             credit_amount,
-            None,
+            value_dict['Merchant Category'],
             closing_balance,
             trans_date,
             None

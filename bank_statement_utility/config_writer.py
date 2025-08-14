@@ -2,7 +2,7 @@
 from configparser import ConfigParser
 
 from .Constants import APP_CONFIG_PATH
-from .version import __version_1_2_1__, __version_2_0_0__, __version_2_0_1__
+from .version import __version_1_2_1__, __version_2_0_0__, __version_2_0_1__, __version_2_1_0__
 
 config = ConfigParser()
 
@@ -54,6 +54,8 @@ def check_and_update_config_to_latest(config_file):
         __update_to_2_0_0()
     if version_compare(config_file['Basic']['version'], __version_2_0_1__) == -1:
         __update_to_2_0_1()
+    if version_compare(config_file['Basic']['version'], __version_2_1_0__) == -1:
+        __update_to_2_1_0()
 
 
 def write_default_config():
@@ -119,6 +121,24 @@ def __update_to_2_0_1():
     config.read(APP_CONFIG_PATH + 'config.ini')
     config.set('Basic', 'version', __version_2_0_1__)
     config.set('KOTAK', 'record_ends_with', 'Closing balance')
+
+    with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
+        config.write(f)
+
+
+def __update_to_2_1_0():
+    config.read(APP_CONFIG_PATH + 'config.ini')
+    config.set('Basic', 'version', __version_2_1_0__)
+    config.set('SBI_Creditcard', 'igst_date_regex',
+               'for Statement Period: [0-9]{2} [A-Za-z]{3} [0-9]{2} to ([0-9]{2} [A-Za-z]{3} [0-9]{2})')
+
+    CATEGORY = 'YES_Creditcard'
+    config.add_section(CATEGORY)
+    config.set(CATEGORY, 'data_headers', 'Date,Transaction Details,Merchant Category,Amount')
+    config.set(CATEGORY, 'record_selector_regex',
+               '^(\\d{2}\\/\\d{2}\\/\\d{4}) (.*?Ref No: [0-9A-Z]+) (.*) ([0-9,]+[.][0-9]{2}( Cr| Dr))')
+    config.set(CATEGORY, 'record_end_regex',
+               '-End of the Statement-')
 
     with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
         config.write(f)

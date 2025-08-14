@@ -1,14 +1,16 @@
 import re
 
 from pypdf import PdfReader
+
 from .IParser import IParser
 from ..logger import log
 
 
 class PdfParserWithCustomHeader(IParser):
 
-    def __init__(self, filename: str, record_selector_regex: str, data_headers: list):
+    def __init__(self, filename: str, record_selector_regex: str, record_end_regex: str, data_headers: list):
         self.record_selector_regex = record_selector_regex
+        self.record_end_regex = record_end_regex
         self.data_headers = data_headers
         self.file_reader = PdfReader(filename)
         self.match_records = []
@@ -58,6 +60,13 @@ class PdfParserWithCustomHeader(IParser):
 
             for matchNum, match in enumerate(matches, start=1):
                 self.match_records.append(match)
+
+            # End when regex matches the end condition if defined
+            if self.record_end_regex:
+                matchList = list(re.finditer(self.record_end_regex, page_text, re.MULTILINE))
+                if matchList:
+                    log.info("Reached end condition for record selection")
+                    break
 
     def close(self):
         self.file_reader.stream.close()
