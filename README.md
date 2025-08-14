@@ -3,7 +3,7 @@
 <!-- buttons -->
 <p>
     <a href="https://www.python.org/">
-        <img src="https://img.shields.io/badge/python-v3.11.x-blue.svg"
+        <img src="https://img.shields.io/badge/python-v3.12.x-blue.svg"
             alt="python"></a> &nbsp;
     <a href="https://opensource.org/licenses/MIT">
         <img src="https://img.shields.io/badge/license-MIT-blue.svg"
@@ -66,10 +66,11 @@ Below are the format information that the utility support for various banks. Dow
 
 ### For Credit Card Statement
 
-| Bank Name     |      Account Type      | File Format |            Statement/Download Type             |
-|---------------|:----------------------:|:-----------:|:----------------------------------------------:|
-| Kotak Bank**  |      Credit Card       |     pdf     |        Statement received through Email        |
-| SBI Bank**    |      Credit Card       |     pdf     |        Statement received through Email        |
+| Bank Name    |      Account Type      | File Format |            Statement/Download Type             |
+|--------------|:----------------------:|:-----------:|:----------------------------------------------:|
+| Kotak Bank** |      Credit Card       |     pdf     |        Statement received through Email        |
+| SBI Bank**   |      Credit Card       |     pdf     |        Statement received through Email        |
+| Yes Bank**   |      Credit Card       |     pdf     |        Statement received through Email        |
 
 <i>** <u>Limitation:</u> Credit Card Statement can have duplicate scenario where it transaction can be of same amount on same date with same description and since it doesn't has closing balance, while storing to Db it will be overwritten due to non-uniqueness. Will have to handle such scenario manually. </i>
 
