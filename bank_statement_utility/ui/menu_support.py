@@ -5,6 +5,7 @@ from os.path import dirname
 
 import ttkbootstrap as ttk
 from PIL import Image, ImageTk
+from bank_statement_utility.version import __version__
 
 
 class AboutPage(tk.Toplevel):
@@ -36,7 +37,11 @@ class AboutPage(tk.Toplevel):
 
         # Display credits
         credits_label = ttk.Label(self, font="-size 8", text="Developed by: Malay Shah")
-        credits_label.pack(pady=20)
+        credits_label.pack(pady=1)
+
+        # version credits
+        version_label = ttk.Label(self, font="-size 8", text="Version " + __version__)
+        version_label.pack(pady=1)
 
 
 def quit_app():
