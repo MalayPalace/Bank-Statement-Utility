@@ -14,7 +14,7 @@ from tkinter import filedialog
 
 import ttkbootstrap as ttk
 from tkinterdnd2 import DND_FILES
-from ttkbootstrap import DARK, LIGHT, SECONDARY
+from ttkbootstrap import DARK, LIGHT, SECONDARY, PRIMARY, OUTLINE
 
 from bank_statement_utility.Constants import BANK_NAMES, ACCOUNT_TYPE, ExportType
 from bank_statement_utility.StatementProcessor import StatementProcessor
@@ -22,6 +22,7 @@ from bank_statement_utility.logger import log
 from bank_statement_utility.services.ExportService import ExportService
 from bank_statement_utility.services.VerificationService import VerificationService
 from bank_statement_utility.ui import menu_support
+from bank_statement_utility.ui.StatisticsView import StatisticsView
 from bank_statement_utility.ui.tooltip import ToolTip
 from bank_statement_utility.ui.ui_utils import show_alert, append_to_text_ln, get_spaced_text
 
@@ -33,6 +34,7 @@ _bgmode = 'light'
 _tabbg1 = '#d9d9d9'
 _tabbg2 = 'gray40'
 _READONLY = "readonly"
+_SECONDARY_OUTLINE = SECONDARY + "-" + OUTLINE
 _HOME_PATH = os.path.expanduser("~")
 
 _style_code_ran = 0
@@ -78,18 +80,24 @@ class MainScreenView:
 
         _style_code()
 
-        self.TabProcess = ttk.Button(self.top, bootstyle=LIGHT)
-        self.TabProcess.place(relx=0.0, rely=0.0, height=129, width=123)
-        self.TabProcess.configure(takefocus="")
-        self.TabProcess.configure(text='''Process''')
-        self.TabProcess.configure(compound='left')
-        self.TabProcess.configure(command=self.__process_button_pressed)
+        self.button_frame = ttk.Frame(self.top)
+        self.button_frame.place(relx=0.0, rely=0.0, relheight=1.0, width=123)
 
-        self.TabVerify = ttk.Button(self.top, bootstyle=SECONDARY)
-        self.TabVerify.place(relx=0.0, rely=0.5, height=129, width=123)
-        self.TabVerify.configure(text='''Verify''')
-        self.TabVerify.configure(compound='left')
-        self.TabVerify.configure(command=self.__verify_button_pressed)
+        self.TabProcess = ttk.Button(
+            self.button_frame,
+            text="Process",
+            bootstyle=PRIMARY,
+            command=self.__process_button_pressed
+        )
+        self.TabProcess.pack(side="top", expand=True, fill="both")
+
+        self.TabVerify = ttk.Button(
+            self.button_frame,
+            text="Verify",
+            bootstyle=_SECONDARY_OUTLINE,
+            command=self.__verify_button_pressed
+        )
+        self.TabVerify.pack(side="top", expand=True, fill="both")
 
         self.TLabel1 = ttk.Label(self.top)
         self.TLabel1.place(relx=0.151, rely=0.07, height=21, width=94)
@@ -220,6 +228,8 @@ class MainScreenView:
         # Create Help Menu
         help_menu = tk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
         help_menu.add_command(command=lambda: menu_support.about(self.top), label=get_spaced_text("About"))
+        help_menu.add_command(command=lambda: self.__open_statistics_window(self.top),
+                              label=get_spaced_text("Statistics"))
 
         self.menubar.add_cascade(menu=file,
                                  label="File")
@@ -247,18 +257,18 @@ class MainScreenView:
             show_alert("Warning", "File cannot be dropped on this View")
 
     def __process_button_pressed(self):
-        self.TabProcess.configure(bootstyle=LIGHT)
-        self.TabVerify.configure(bootstyle=SECONDARY)
-        self.TButtonAction.configure(text='''Process''')
+        self.TabProcess.configure(bootstyle=PRIMARY)
+        self.TabVerify.configure(bootstyle=_SECONDARY_OUTLINE)
+        self.TButtonAction.configure(text="Process")
         self.TButtonUpload.place(relx=0.647, rely=0.272, height=26, width=103)
         self.TEntryUploadPath.place(relx=0.26, rely=0.276, relheight=0.097
                                     , relwidth=0.388)
         self.TLabel3.place(relx=0.152, rely=0.289, height=21, width=94)
 
     def __verify_button_pressed(self):
-        self.TabProcess.configure(bootstyle=SECONDARY)
-        self.TabVerify.configure(bootstyle=LIGHT)
-        self.TButtonAction.configure(text='''Verify''')
+        self.TabVerify.configure(bootstyle=PRIMARY)
+        self.TabProcess.configure(bootstyle=_SECONDARY_OUTLINE)
+        self.TButtonAction.configure(text="Verify")
         self.TButtonUpload.place_forget()
         self.TEntryUploadPath.place_forget()
         self.TLabel3.place_forget()
@@ -406,3 +416,6 @@ class MainScreenView:
                 raise ValueError("File not Found or unable to Read it.")
 
         return True
+
+    def __open_statistics_window(self, root):
+        StatisticsView(root)

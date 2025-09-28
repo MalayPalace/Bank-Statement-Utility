@@ -54,7 +54,7 @@ def check_and_update_config_to_latest(config_file):
         __update_to_2_0_0()
     if version_compare(config_file['Basic']['version'], __version_2_0_1__) == -1:
         __update_to_2_0_1()
-    if version_compare(config_file['Basic']['version'], __version_2_1_0__) == -1:
+    if version_compare(config_file['Basic']['version'], __version_2_1_0__) <= 0:
         __update_to_2_1_0()
 
 
@@ -110,6 +110,7 @@ def write_default_config():
 
 
 def __update_to_2_0_0():
+    print("Updating config to 2.0.0")
     config.read(APP_CONFIG_PATH + 'config.ini')
     config.set('Basic', 'version', __version_2_0_0__)
 
@@ -118,6 +119,7 @@ def __update_to_2_0_0():
 
 
 def __update_to_2_0_1():
+    print("Updating config to 2.0.1")
     config.read(APP_CONFIG_PATH + 'config.ini')
     config.set('Basic', 'version', __version_2_0_1__)
     config.set('KOTAK', 'record_ends_with', 'Closing balance')
@@ -127,18 +129,25 @@ def __update_to_2_0_1():
 
 
 def __update_to_2_1_0():
+    print("Checking and updating config to 2.1.0")
     config.read(APP_CONFIG_PATH + 'config.ini')
     config.set('Basic', 'version', __version_2_1_0__)
-    config.set('SBI_Creditcard', 'igst_date_regex',
-               'for Statement Period: [0-9]{2} [A-Za-z]{3} [0-9]{2} to ([0-9]{2} [A-Za-z]{3} [0-9]{2})')
+
+    if not config.has_option('SBI_Creditcard', 'igst_date_regex'):
+        config.set('SBI_Creditcard', 'igst_date_regex',
+                   'for Statement Period: [0-9]{2} [A-Za-z]{3} [0-9]{2} to ([0-9]{2} [A-Za-z]{3} [0-9]{2})')
 
     CATEGORY = 'YES_Creditcard'
-    config.add_section(CATEGORY)
-    config.set(CATEGORY, 'data_headers', 'Date,Transaction Details,Merchant Category,Amount')
-    config.set(CATEGORY, 'record_selector_regex',
-               '^(\\d{2}\\/\\d{2}\\/\\d{4}) (.*?Ref No: [0-9A-Z]+) (.*) ([0-9,]+[.][0-9]{2}( Cr| Dr))')
-    config.set(CATEGORY, 'record_end_regex',
-               '-End of the Statement-')
+    if not config.has_section(CATEGORY):
+        config.add_section(CATEGORY)
+    if not config.has_option(CATEGORY, 'data_headers'):
+        config.set(CATEGORY, 'data_headers', 'Date,Transaction Details,Merchant Category,Amount')
+    if not config.has_option(CATEGORY, 'record_selector_regex'):
+        config.set(CATEGORY, 'record_selector_regex',
+                   '^(\\d{2}\\/\\d{2}\\/\\d{4}) (.*? - Ref No:[ \\n][0-9A-Z]{23})([ \\nA-Za-z0-9()]*) ([0-9,]+[.][0-9]{2}( Cr| Dr))')
+    if not config.has_option(CATEGORY, 'record_end_regex'):
+        config.set(CATEGORY, 'record_end_regex',
+                   '-End of the Statement-')
 
     with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
         config.write(f)

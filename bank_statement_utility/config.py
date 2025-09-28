@@ -11,10 +11,12 @@ config = configparser.ConfigParser()
 try:
     config.read_file(open(APP_CONFIG_PATH + "config.ini"))
     check_and_update_config_to_latest(config)
+    config.read_file(open(APP_CONFIG_PATH + "config.ini"))
 except IOError:
     write_default_config()
     try:
         config.read_file(open(APP_CONFIG_PATH + "config.ini"))
         check_and_update_config_to_latest(config)
+        config.read_file(open(APP_CONFIG_PATH + "config.ini"))
     except IOError:
         sys.exit("Config file not found. Ensure config.ini is placed at path:" + APP_CONFIG_PATH)

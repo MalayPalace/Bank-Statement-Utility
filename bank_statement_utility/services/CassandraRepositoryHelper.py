@@ -149,6 +149,59 @@ class CassandraRepositoryHelper:
             return statement_obj
         return result
 
+    def get_min_max_date_by_bank_source_ordered(self) -> list[dict]:
+        query = (
+            "SELECT bank_name, source, transaction_date "
+            "FROM {0}".format(DB_TABLE_NAME)
+        )
+        result = self.session.execute(query)
+        agg = {}
+
+        if result:
+            for row in result:
+                key = (row.bank_name, row.source)
+                date = row.transaction_date
+                if key not in agg:
+                    agg[key] = {"bank_name": row.bank_name, "source": row.source, "min_date": date, "max_date": date}
+                else:
+                    if date < agg[key]["min_date"]:
+                        agg[key]["min_date"] = date
+                    if date > agg[key]["max_date"]:
+                        agg[key]["max_date"] = date
+            # Sort by max_date descending
+            return sorted(agg.values(), key=lambda x: x["max_date"], reverse=True)
+
+        return result
+
+    def get_latest_balance(self, bank_name: str, source: str) -> float:
+        query = (
+            "SELECT closing_balance,transaction_date,ins_date "
+            "FROM {0} "
+            "WHERE bank_name = %s AND source = %s ALLOW FILTERING;".format(DB_TABLE_NAME)
+        )
+        result = self.session.execute(query, [bank_name, source])
+
+        if result:
+            sorted_result = sorted(list(result), key=lambda row: (row.transaction_date, row.ins_date), reverse=True)
+            latest_balance = sorted_result[0].closing_balance
+            return round(float(latest_balance), 2)
+
+        return 0.0
+
+    def get_outstanding_balance(self, bank_name: str, source: str) -> float:
+        query = (
+            "SELECT SUM(closing_balance) AS total_balance "
+            "FROM {0} "
+            "WHERE bank_name = %s AND source = %s ALLOW FILTERING;".format(DB_TABLE_NAME)
+        )
+        result = self.session.execute(query, [bank_name, source])
+        row = result.one()
+
+        if row and row.total_balance is not None:
+            return round(float(row.total_balance), 2)
+
+        return 0.0
+
     def close_db(self):
         if self.session:
             self.session.shutdown()

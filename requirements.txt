@@ -1,7 +1,7 @@
-cassandra-driver~=3.29.0
-setuptools==67.6.0
-xlrd==2.0.1
-pytz==2023.2
-pypdf~=3.17.4
-ttkbootstrap~=1.10.1
-tkinterdnd2~=0.3.0
+cassandra-driver~=3.29.2
+setuptools~=80.9.0
+xlrd~=2.0.2
+pytz~=2025.2
+pypdf~=6.0.0
+ttkbootstrap~=1.14.2
+tkinterdnd2~=0.4.3
