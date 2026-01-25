@@ -321,7 +321,7 @@ class MainScreenView:
 
             elif "Verify" == button_text:
                 years = 3
-                no_of_days_in_year = 365
+                no_of_days_in_year = 365 * 5
                 oldest_date = datetime.now() - timedelta(days=years * no_of_days_in_year)
 
                 print(f"Using Start Date:{oldest_date.date()}")
