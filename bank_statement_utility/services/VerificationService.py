@@ -56,8 +56,12 @@ class VerificationService(object):
             log.info("Successful")
             validate_flag = True
         else:
-            log.info(f"Difference Found - Amount:{diff_in_amount}")
-            print(f"Difference Found - Amount:{diff_in_amount}")
+            if diff_in_amount < 0:
+                log.info(f"Difference Found - Amount: {diff_in_amount} (means extra amount recorded in statement)")
+                print(f"Difference Found - Amount: {diff_in_amount} (means extra amount recorded in statement)")
+            else:
+                log.info(f"Difference Found - Amount: {diff_in_amount} (means less amount recorded in statement)")
+                print(f"Difference Found - Amount: {diff_in_amount} (means less amount recorded in statement)")
 
         # Close Db Connection
         log.info("Closing database connection")

@@ -41,7 +41,9 @@ class SbiDebitStatementProcessor(BankStatementInterface):
         trans_date = datetime.strptime(value_dict['Date'], '%d/%m/%Y')
 
         # remove new lines character from description
-        description = value_dict['Details'].replace('\n', '').strip()
+        description = value_dict['Details'].replace('\n ', '').strip()
+        # Fallback for description format without a space
+        description = description.replace('\n', '').strip()
 
         record = StatementDB(
             self.name,
