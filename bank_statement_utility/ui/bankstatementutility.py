@@ -227,6 +227,7 @@ class MainScreenView:
 
         # Create Help Menu
         help_menu = tk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
+        help_menu.add_command(command=lambda: menu_support.guide(self.top), label=get_spaced_text("Guide"))
         help_menu.add_command(command=lambda: menu_support.about(self.top), label=get_spaced_text("About"))
         help_menu.add_command(command=lambda: self.__open_statistics_window(self.top),
                               label=get_spaced_text("Statistics"))

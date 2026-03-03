@@ -161,5 +161,17 @@ def __update_to_2_1_1():
     config.set('Basic', 'version', __version_2_1_1__)
     config.set('SBI', 'record_starts_with', '18')
 
+    CATEGORY = 'HDFC_Creditcard'
+    if not config.has_section(CATEGORY):
+        config.add_section(CATEGORY)
+    if not config.has_option(CATEGORY, 'data_headers'):
+        config.set(CATEGORY, 'data_headers', 'Date & Time,Transaction Description,Credit,Amount')
+    if not config.has_option(CATEGORY, 'record_selector_regex'):
+        config.set(CATEGORY, 'record_selector_regex',
+                   '^(\\d{2}\\/\\d{2}\\/\\d{4})\\| [\\d:]+ ([\\w\\n\\s*#()]+).*?([+]*)  C ([0-9,]+[.][0-9]{2}) l')
+    if not config.has_option(CATEGORY, 'record_end_regex'):
+        config.set(CATEGORY, 'record_end_regex',
+                   'Rewards Program Points Summary')
+
     with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
         config.write(f)

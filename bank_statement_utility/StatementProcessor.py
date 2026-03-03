@@ -3,6 +3,7 @@ import sys
 from .logger import log
 from .services.BobDebitStatementProcessor import BobDebitStatementProcessor
 from .services.CassandraRepositoryHelper import CassandraRepositoryHelper
+from .services.HdfcCcStatementProcessor import HdfcCcStatementProcessor
 from .services.HdfcDebitStatementProcessor import HdfcDebitStatementProcessor
 from .services.IdbiDebitStatmentProcessor import IdbiDebitStatementProcessor
 from .services.KotakDebitStatementProcessor import KotakDebitStatementProcessor
@@ -84,6 +85,8 @@ class StatementProcessor(object):
         if self.bank_name == "HDFC":
             if self.source == "Saving" or self.source == "Current":
                 processor = HdfcDebitStatementProcessor(self.filepath, self.source)
+            elif self.source == "Creditcard":
+                processor = HdfcCcStatementProcessor(self.filepath, self.source)
 
         elif self.bank_name == "KOTAK":
             if self.source == "Saving" or self.source == "Current":
