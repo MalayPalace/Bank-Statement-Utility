@@ -176,8 +176,6 @@ def __update_to_2_1_1():
         config.set(CATEGORY, 'record_end_regex',
                    'Rewards Program Points Summary')
 
-    ## TODO: Add GST regex and modify PdfParser
-    ## ^(\d{2}\/\d{2}\/\d{4}) (GOODS & SERVICES TAX - GST @ [0-9%]+) ([0-9,]+[.][0-9]{2}( Cr| Dr))
     with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
         config.write(f)
 

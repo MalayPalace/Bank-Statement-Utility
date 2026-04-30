@@ -69,7 +69,7 @@ class MainScreenView:
         self.radioButton_account_type = tk.StringVar()
         # ============= Variables to hold data ======
 
-        self.menubar = tk.Menu(top, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
+        self.menubar = ttk.Menu(top, font="TkMenuFont", bg=_bgcolor, fg=_fgcolor)
         top.configure(menu=self.menubar)
 
         # Allow drag and drop of file on whole window
@@ -151,6 +151,13 @@ class MainScreenView:
         self.TLabel3.configure(text='''Upload File''')
         self.TLabel3.configure(compound=tk.LEFT)
 
+        self.TLabelSupportedFormats = ttk.Label(self.top, bootstyle=PRIMARY, cursor="hand2",
+                                                font="-family {DejaVu Sans} -size 8 -slant italic -underline 1")
+        self.TLabelSupportedFormats.place(relx=0.152, rely=0.389, height=15, width=150)
+        self.TLabelSupportedFormats.configure(text='''Supported formats''')
+        self.TLabelSupportedFormats.configure(justify=tk.LEFT)
+        self.TLabelSupportedFormats.bind("<Button-1>", lambda e: menu_support.guide(self.top))
+
         self.TComboboxBankName = ttk.Combobox(self.top)
         self.TComboboxBankName.place(relx=0.259, rely=0.05, relheight=0.122
                                      , relwidth=0.205)
@@ -215,25 +222,30 @@ class MainScreenView:
 
     def __configure_menu_bar(self, top):
         # Create Export Sub-Menu
-        sub_export = tk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
+        sub_export = ttk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
         sub_export.add_command(command=lambda: self.export(ExportType.CSV), label=get_spaced_text("as CSV"))
         sub_export.add_command(command=lambda: self.export(ExportType.QIF), label=get_spaced_text("as QIF"))
 
+        # Create Edit Menu
+        edit_menu = ttk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
+        edit_menu.add_command(command=lambda: menu_support.add_manual_entry(self.top), label=get_spaced_text("Add Manual Entry"))
+
         # Create File Menu
-        file = tk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
+        file = ttk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
         file.add_cascade(menu=sub_export, label=get_spaced_text("Export"))
         file.add_separator()
         file.add_command(command=menu_support.quit_app, label=get_spaced_text("Quit"))
 
         # Create Help Menu
-        help_menu = tk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
-        help_menu.add_command(command=lambda: menu_support.guide(self.top), label=get_spaced_text("Guide"))
+        help_menu = ttk.Menu(top, font="-family {DejaVu Sans} -size 10", tearoff=0)
         help_menu.add_command(command=lambda: menu_support.about(self.top), label=get_spaced_text("About"))
         help_menu.add_command(command=lambda: self.__open_statistics_window(self.top),
                               label=get_spaced_text("Statistics"))
 
         self.menubar.add_cascade(menu=file,
                                  label="File")
+        self.menubar.add_cascade(menu=edit_menu,
+                                 label="Edit")
         self.menubar.add_cascade(menu=help_menu,
                                  label="Help")
 
@@ -265,6 +277,7 @@ class MainScreenView:
         self.TEntryUploadPath.place(relx=0.26, rely=0.276, relheight=0.097
                                     , relwidth=0.388)
         self.TLabel3.place(relx=0.152, rely=0.289, height=21, width=94)
+        self.TLabelSupportedFormats.place(relx=0.152, rely=0.389, height=15, width=150)
 
     def __verify_button_pressed(self):
         self.TabVerify.configure(bootstyle=PRIMARY)
@@ -273,6 +286,7 @@ class MainScreenView:
         self.TButtonUpload.place_forget()
         self.TEntryUploadPath.place_forget()
         self.TLabel3.place_forget()
+        self.TLabelSupportedFormats.place_forget()
 
     def upload_file(self):
         file_type_map = (
