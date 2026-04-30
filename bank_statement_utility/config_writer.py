@@ -55,11 +55,11 @@ def check_and_update_config_to_latest(config_file):
         __update_to_2_0_0()
     if version_compare(config_file['Basic']['version'], __version_2_0_1__) == -1:
         __update_to_2_0_1()
-    if version_compare(config_file['Basic']['version'], __version_2_1_0__) <= 0:
+    if version_compare(config_file['Basic']['version'], __version_2_1_0__) == -1:
         __update_to_2_1_0()
-    if version_compare(config_file['Basic']['version'], __version_2_1_1__) <= 0:
+    if version_compare(config_file['Basic']['version'], __version_2_1_1__) == -1:
         __update_to_2_1_1()
-    if version_compare(config_file['Basic']['version'], __version_2_1_2__) <= 0:
+    if version_compare(config_file['Basic']['version'], __version_2_1_2__) == -1:
         __update_to_2_1_2()
 
 
