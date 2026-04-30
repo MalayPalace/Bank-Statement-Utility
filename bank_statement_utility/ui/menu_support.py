@@ -6,6 +6,7 @@ from os.path import dirname
 import ttkbootstrap as ttk
 from PIL import Image, ImageTk
 
+from bank_statement_utility.ui.manual_entry_page import AddManualEntryPage
 from bank_statement_utility.version import __version__
 
 
@@ -13,6 +14,8 @@ class AboutPage(tk.Toplevel):
 
     def __init__(self, parent):
         super().__init__(parent)
+        self.transient(parent)
+        self.grab_set()
         self.title("About")
         self.geometry("450x260+628+344")
 
@@ -49,6 +52,8 @@ class GuidePage(tk.Toplevel):
 
     def __init__(self, parent):
         super().__init__(parent)
+        self.transient(parent)
+        self.grab_set()
         self.title("Guide - Supported Bank Formats")
         self.geometry("900x400+200+200")
 
@@ -200,3 +205,7 @@ def about(root):
 
 def guide(root):
     GuidePage(root)
+
+
+def add_manual_entry(root):
+    AddManualEntryPage(root)

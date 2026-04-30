@@ -2,7 +2,8 @@
 from configparser import ConfigParser
 
 from .Constants import APP_CONFIG_PATH
-from .version import __version_1_2_1__, __version_2_0_0__, __version_2_0_1__, __version_2_1_0__, __version_2_1_1__
+from .version import __version_1_2_1__, __version_2_0_0__, __version_2_0_1__, __version_2_1_0__, __version_2_1_1__, \
+    __version_2_1_2__
 
 config = ConfigParser()
 
@@ -58,6 +59,8 @@ def check_and_update_config_to_latest(config_file):
         __update_to_2_1_0()
     if version_compare(config_file['Basic']['version'], __version_2_1_1__) <= 0:
         __update_to_2_1_1()
+    if version_compare(config_file['Basic']['version'], __version_2_1_2__) <= 0:
+        __update_to_2_1_2()
 
 
 def write_default_config():
@@ -172,6 +175,19 @@ def __update_to_2_1_1():
     if not config.has_option(CATEGORY, 'record_end_regex'):
         config.set(CATEGORY, 'record_end_regex',
                    'Rewards Program Points Summary')
+
+    ## TODO: Add GST regex and modify PdfParser
+    ## ^(\d{2}\/\d{2}\/\d{4}) (GOODS & SERVICES TAX - GST @ [0-9%]+) ([0-9,]+[.][0-9]{2}( Cr| Dr))
+    with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
+        config.write(f)
+
+
+def __update_to_2_1_2():
+    print("Checking and updating config to 2.1.2")
+    config.read(APP_CONFIG_PATH + 'config.ini')
+    config.set('Basic', 'version', __version_2_1_2__)
+    config.set('KOTAK_Creditcard', 'record_selector_regex',
+               '^(\\d{2}-[A-Za-z]{3}-\\d{4}) (.*) ([0-9,]+[.][0-9]{2}( Cr){0,1})')
 
     with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
         config.write(f)
