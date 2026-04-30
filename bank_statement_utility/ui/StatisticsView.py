@@ -1,7 +1,7 @@
 import tkinter as tk
 
 import ttkbootstrap as ttk
-from ttkbootstrap import LIGHT, SUCCESS
+from ttkbootstrap import LIGHT, SUCCESS, OUTLINE
 
 from .ui_utils import show_alert
 from ..logger import log
@@ -12,6 +12,8 @@ class StatisticsView(tk.Toplevel):
 
     def __init__(self, parent):
         super().__init__(parent)
+        self.transient(parent)
+        self.grab_set()
         self.title("Statistics")
         # self.geometry("430x320+285+375")
         self.resizable(True, True)
@@ -45,12 +47,17 @@ class StatisticsView(tk.Toplevel):
         self.latest_labels = {}
         self.oldest_labels = {}
 
+        # Add refresh button in the top right
+        refresh_btn = ttk.Button(self, text="🔄", command=self.__refresh_data, bootstyle=OUTLINE, width=3)
+        refresh_btn.grid(row=0, column=5, padx=10, pady=8, sticky="e")
+
+        self.legend_label = None
         self.__get_data_and_populate()
 
         # Add legend at the bottom
         legend_text = "*For Credit-Card. Balance will show Outstanding Amount."
-        legend_label = ttk.Label(self, text=legend_text, wraplength=400, font=("Arial", 9, "italic"))
-        legend_label.grid(row=1000, column=0, columnspan=5, padx=10, pady=16, sticky="w")
+        self.legend_label = ttk.Label(self, text=legend_text, wraplength=400, font=("Arial", 9, "italic"))
+        self.legend_label.grid(row=1000, column=0, columnspan=6, padx=10, pady=16, sticky="w")
 
     def format_currency_indian(self, amount):
         """Format a number into Indian currency format with commas (thousand, lakh, crore)
@@ -95,6 +102,19 @@ class StatisticsView(tk.Toplevel):
             return f"-{chr(8377)} {formatted_whole}.{frac:02d}"
         else:
             return f"{chr(8377)} {formatted_whole}.{frac:02d}"
+
+    def __refresh_data(self):
+        """Clear all data rows and repopulate with fresh data from database"""
+        # Get all widgets in the window
+        for widget in self.winfo_children():
+            # Keep the header labels (row 0) and legend label
+            info = widget.grid_info()
+            row = info.get('row', -1)
+            if row != 0 and widget != self.legend_label:
+                widget.grid_remove()
+
+        # Repopulate the data
+        self.__get_data_and_populate()
 
     def __get_data_and_populate(self):
         result = self.cass_service.get_min_max_date_by_bank_source_ordered()

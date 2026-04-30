@@ -1,7 +1,8 @@
 # Will point to the latest version
-__version__ = "2.1.1"
+__version__ = "2.1.2"
 
 # version specific constants
+__version_2_1_2__ = "2.1.2"
 __version_2_1_1__ = "2.1.1"
 __version_2_1_0__ = "2.1.0"
 __version_2_0_1__ = "2.0.1"

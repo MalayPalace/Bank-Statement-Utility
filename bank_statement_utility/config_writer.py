@@ -2,7 +2,8 @@
 from configparser import ConfigParser
 
 from .Constants import APP_CONFIG_PATH
-from .version import __version_1_2_1__, __version_2_0_0__, __version_2_0_1__, __version_2_1_0__, __version_2_1_1__
+from .version import __version_1_2_1__, __version_2_0_0__, __version_2_0_1__, __version_2_1_0__, __version_2_1_1__, \
+    __version_2_1_2__
 
 config = ConfigParser()
 
@@ -54,10 +55,12 @@ def check_and_update_config_to_latest(config_file):
         __update_to_2_0_0()
     if version_compare(config_file['Basic']['version'], __version_2_0_1__) == -1:
         __update_to_2_0_1()
-    if version_compare(config_file['Basic']['version'], __version_2_1_0__) <= 0:
+    if version_compare(config_file['Basic']['version'], __version_2_1_0__) == -1:
         __update_to_2_1_0()
-    if version_compare(config_file['Basic']['version'], __version_2_1_1__) <= 0:
+    if version_compare(config_file['Basic']['version'], __version_2_1_1__) == -1:
         __update_to_2_1_1()
+    if version_compare(config_file['Basic']['version'], __version_2_1_2__) == -1:
+        __update_to_2_1_2()
 
 
 def write_default_config():
@@ -160,6 +163,29 @@ def __update_to_2_1_1():
     config.read(APP_CONFIG_PATH + 'config.ini')
     config.set('Basic', 'version', __version_2_1_1__)
     config.set('SBI', 'record_starts_with', '18')
+
+    CATEGORY = 'HDFC_Creditcard'
+    if not config.has_section(CATEGORY):
+        config.add_section(CATEGORY)
+    if not config.has_option(CATEGORY, 'data_headers'):
+        config.set(CATEGORY, 'data_headers', 'Date & Time,Transaction Description,Credit,Amount')
+    if not config.has_option(CATEGORY, 'record_selector_regex'):
+        config.set(CATEGORY, 'record_selector_regex',
+                   '^(\\d{2}\\/\\d{2}\\/\\d{4})\\| [\\d:]+ ([\\w\\n\\s*#()]+).*?([+]*)  C ([0-9,]+[.][0-9]{2}) l')
+    if not config.has_option(CATEGORY, 'record_end_regex'):
+        config.set(CATEGORY, 'record_end_regex',
+                   'Rewards Program Points Summary')
+
+    with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
+        config.write(f)
+
+
+def __update_to_2_1_2():
+    print("Checking and updating config to 2.1.2")
+    config.read(APP_CONFIG_PATH + 'config.ini')
+    config.set('Basic', 'version', __version_2_1_2__)
+    config.set('KOTAK_Creditcard', 'record_selector_regex',
+               '^(\\d{2}-[A-Za-z]{3}-\\d{4}) (.*) ([0-9,]+[.][0-9]{2}( Cr){0,1})')
 
     with open(APP_CONFIG_PATH + 'config.ini', 'w') as f:
         config.write(f)
