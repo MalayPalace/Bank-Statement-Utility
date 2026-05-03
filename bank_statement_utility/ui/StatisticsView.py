@@ -12,8 +12,6 @@ class StatisticsView(tk.Toplevel):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.transient(parent)
-        self.grab_set()
         self.title("Statistics")
         # self.geometry("430x320+285+375")
         self.resizable(True, True)

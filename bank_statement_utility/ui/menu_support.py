@@ -15,9 +15,10 @@ class AboutPage(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.transient(parent)
-        self.grab_set()
         self.title("About")
         self.geometry("450x260+628+344")
+        # Delay grab_set() to allow window to be fully rendered
+        self.after(100, self.grab_set)
 
         # Load and display the application icon
         execution_path = dirname(getsourcefile(lambda: 0))
@@ -53,9 +54,10 @@ class GuidePage(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.transient(parent)
-        self.grab_set()
         self.title("Guide - Supported Bank Formats")
         self.geometry("900x400+200+200")
+        # Delay grab_set() to allow window to be fully rendered
+        self.after(100, self.grab_set)
 
         # Title Label
         title_label = ttk.Label(self, text="Supported Bank Statement Formats", font=("Arial", 14, "bold"))

@@ -49,7 +49,7 @@ class KotakCcStatementProcessor(BankStatementInterface):
             closing_balance = -debit_amount
 
         # Date formatting
-        trans_date = datetime.strptime(value_dict['Date'], '%d/%m/%Y')
+        trans_date = datetime.strptime(value_dict['Date'], '%d-%b-%Y')
 
         record = StatementDB(
             self.name,

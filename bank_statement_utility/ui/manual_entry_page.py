@@ -41,6 +41,12 @@ class AddManualEntryPage(tk.Toplevel):
         self.amount_var = tk.StringVar()
         self.closing_balance_var = tk.StringVar()
 
+        # Add trace callbacks for account type and amount changes
+        self.account_type_var.trace('w', self._on_account_type_change)
+        self.amount_var.trace('w', self._on_amount_change)
+        self.transaction_type_var.trace('w',
+                                        self._on_transaction_type_change)
+
         # Create main frame with padding
         main_frame = ttk.Frame(self, padding="20")
         main_frame.pack(fill=tk.BOTH, expand=True)
@@ -185,6 +191,55 @@ class AddManualEntryPage(tk.Toplevel):
         ttk.Button(button_frame, text="Cancel", command=date_picker_window.destroy).pack(side="left", padx=5)
 
         picker_frame.columnconfigure(1, weight=1)
+
+    def _on_account_type_change(self, *args):
+        """Handle account type change - disable/enable closing balance based on account type"""
+        account_type = self.account_type_var.get()
+
+        # Disable closing balance for Credit Card, enable for others
+        if account_type == "Creditcard":
+            self.closing_balance_entry.config(state='disabled')
+            # Auto-populate closing balance if amount is already entered
+            self._update_closing_balance()
+        else:
+            self.closing_balance_entry.config(state='normal')
+            self.closing_balance_var.set('')
+
+    def _on_amount_change(self, *args):
+        """Handle amount change - auto-populate closing balance when CreditCard"""
+        account_type = self.account_type_var.get()
+
+        if account_type == "Creditcard":
+            self._update_closing_balance()
+
+    def _on_transaction_type_change(self, *args):
+        """Handle amount change - auto-populate closing balance when CreditCard"""
+        account_type = self.account_type_var.get()
+
+        if account_type == "Creditcard":
+            self._update_closing_balance()
+
+    def _update_closing_balance(self):
+        """Update closing balance based on transaction type and amount"""
+        amount_text = self.amount_var.get().strip()
+        transaction_type = self.transaction_type_var.get()
+
+        if not amount_text or not transaction_type:
+            return
+
+        try:
+            amount = float(amount_text)
+            if transaction_type == "Debit":
+                closing_balance = -amount
+            else:  # Credit
+                closing_balance = amount
+
+            # Format with 2 decimal places
+            self.closing_balance_var.set(f"{closing_balance:.2f}")
+        except ValueError:
+            log.error("ValueError Exception setting closing amount: {amount}".format(amount=amount_text), exc_info=True)
+            # Invalid amount, don't update
+            pass
 
     def _on_description_change(self, event=None):
         """Update character count for description field"""
