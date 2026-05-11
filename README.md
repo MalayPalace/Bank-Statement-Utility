@@ -90,9 +90,13 @@ docker-compose up -d
 ```bash
 pip install bank_statement_utility-<latest-version>-py3-none-any.whl
 ```
-5. Utility will create Config File when it executes first time at `${HOME}/.local/share/bank-statement-app/config.ini`(For Linux & others)
-   or at `${HOME}/AppData/local/bank-statement-app/config.ini`(For Windows) for Utility to read it. 
-   <br><i>Manually Edit config.ini file to add Cassandra Username/password</i>
+5. Utility will create Config File when it executes first time at `${HOME}/.local/share/bank-statement-app/config.ini`(For Linux & others) <br>
+or at `${HOME}/AppData/local/bank-statement-app/config.ini`(For Windows) for Utility to read it. 
+
+> <i>Manually Edit config.ini file to add Cassandra Username/password</i>
+6. For Linux: Copy paste `bankstatement-utility.desktop` in Linux's local share Desktop files to have a launcher icon
+> Change the Exec & Icon path as needed or add python's executable bin path in PATH variable.
+
 
 ## Basic Usage:
 
